@@ -10,24 +10,113 @@
 
 **NOTE** As this is version *0.0.0* , **the api is subject to change at any time.**
 
+#### Open a connection
+
 ```php
 <?php
 use \SeanMorris\Ksqlc\Ksqlc;
 
-// Open a connection
 $ksql = new Ksqlc('http://your-ksql-server:8088/');
 
-// Run KSQL statments:
-$result = $ksql->run('SHOW QUERIES');
+```
 
-// Run mutliple KSQL statments:
-$result = $ksql->run('SHOW STREAMS', 'SHOW TABLES');
+#### Run KSQL a statment
 
-// Stream KSQL queries as generators:
+Ksql::run will return an array of results, with one element for each string provided:
+
+```php
+$single   = $ksql->run('SHOW QUERIES');
+$multiple = $ksql->run('SHOW STREAMS', 'SHOW TABLES');
+```
+
+`$single`
+
+```json
+[
+    {
+        "queries": [...], ## results are in here
+        "@type": "queries",
+        "statementText": "SHOW QUERIES;",
+        "warnings": [...]
+    }
+]
+```
+
+`$multiple`
+
+```json
+[
+    {
+        "tables": [...], ## results are in here
+        "@type": "tables",
+        "statementText": "SHOW STREAMS;",
+        "warnings": [...]
+    },
+    {
+        "queries": [...], ## results are in here
+        "@type": "queries",
+        "statementText": "SHOW TABLES;",
+        "warnings": [...]
+    }
+]
+```
+
+#### Streaming Queries
+
+Ksqlc will return streaming queries as generators:
+
+```php
+
+$result = $ksql->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES');
+
+```
+
+Generators can be iterated with `foreach`.
+
+```php
+
+foreach($result as $row)
+{
+	// $row
+	// {"ROWKEY": "XXX", "ROWTIME": ".YYY", ...}
+}
+
+```
+
+Queries with limits will terminate when the given number of rows have been iterated.
+
+```php
+
+$result = $ksql->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES LIMIT 20');
+
+```
+
+Queries without limits will run indefinitely, but can be terminated by destorying the reference:
+
+
+```php
+
 $result = $ksql->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES');
 
 foreach($result as $row)
 {
-	//...
+	if($row->property === 'something')
+	{
+		break;
+	}
 }
+
+unset($result);
+
+```
+
+Streaming queries will **ONLY** select new records by default. Use the second param to `Ksqlc::stream()` to process all records from the beginning of time.
+
+
+```php
+
+$result = $ksql->stream($queryString, 'latest');   ## process new records
+
+$result = $ksql->stream($queryString, 'earliest'); ## process everything
+
 ```
