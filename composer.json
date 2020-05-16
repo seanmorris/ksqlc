@@ -1,0 +1,14 @@
+{
+    "name": "seanmorris/ksqlc",
+    "version": "0.0.0",
+    "description": "KSQL Connector for PHP.",
+    "type": "library",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Sean Morris",
+            "email": "<Sean Morris> ksqlc@seanmorr.is"
+        }
+    ],
+    "require": {}
+}
