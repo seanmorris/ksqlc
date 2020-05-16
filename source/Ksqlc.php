@@ -2,9 +2,7 @@
 namespace SeanMorris\Ksqlc;
 class Ksqlc
 {
-	protected const
-		HTTP_OK = 200
-	;
+	protected const HTTP_OK = 200;
 
 	protected $endpoint;
 
@@ -20,12 +18,12 @@ class Ksqlc
 		$this->endpoint = $endpoint;
 	}
 
-	public static function escape($identifier)
+	public function escape($identifier)
 	{
 		return str_replace("'", "''", $identifier);
 	}
 
-	public static function run(...$strings)
+	public function run(...$strings)
 	{
 		foreach($strings as $i => &$s)
 		{
@@ -58,7 +56,7 @@ class Ksqlc
 		return $response;
 	}
 
-	public static function stream($string, $reset = 'latest')
+	public function stream($string, $reset = 'latest')
 	{
 		$response = $this->post('query', json_encode([
 			'ksql' => $string . ';'
