@@ -25,6 +25,7 @@ $ksql = new Ksqlc('http://your-ksql-server:8088/');
 Ksql::run will return an array of results, with one element for each string provided:
 
 ```php
+<?php
 $single   = $ksql->run('SHOW QUERIES');
 $multiple = $ksql->run('SHOW STREAMS', 'SHOW TABLES');
 ```
@@ -66,6 +67,7 @@ $multiple = $ksql->run('SHOW STREAMS', 'SHOW TABLES');
 Ksqlc will return streaming queries as generators:
 
 ```php
+<?php
 
 $result = $ksql->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES');
 
@@ -74,6 +76,7 @@ $result = $ksql->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES');
 Generators can be iterated with `foreach`.
 
 ```php
+<?php
 
 foreach($result as $row)
 {
@@ -86,6 +89,7 @@ foreach($result as $row)
 Queries with limits will terminate when the given number of rows have been iterated.
 
 ```php
+<?php
 
 $result = $ksql->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES LIMIT 20');
 
@@ -95,6 +99,7 @@ Queries without limits will run indefinitely, but can be terminated by destoryin
 
 
 ```php
+<?php
 
 $result = $ksql->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES');
 
@@ -114,6 +119,7 @@ Streaming queries will **ONLY** select new records by default. Use the second pa
 
 
 ```php
+<?php
 
 $result = $ksql->stream($queryString, 'latest');   ## process new records
 
