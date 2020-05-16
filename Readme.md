@@ -31,7 +31,7 @@ $multiple = $ksql->run('SHOW STREAMS', 'SHOW TABLES');
 
 `$single`
 
-```json
+```js
 [
     {
         "queries": [...], ## results are in here
@@ -44,7 +44,7 @@ $multiple = $ksql->run('SHOW STREAMS', 'SHOW TABLES');
 
 `$multiple`
 
-```json
+```js
 [
     {
         "tables": [...], ## results are in here
