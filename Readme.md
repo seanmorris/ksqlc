@@ -17,11 +17,14 @@ use \SeanMorris\Ksqlc\Ksqlc;
 // Open a connection
 $ksql = new Ksqlc('http://your-ksql-server:8088/');
 
-// Run KSQL statments
-$result = $ksql->run('SHOW TABLES');
+// Run KSQL statments:
+$result = $ksql->run('SHOW QUERIES');
 
-// Stream KSQL queries
-$result = $ksql->run('SELECT * FROM EVENT_STREAM EMIT CHANGES');
+// Run mutliple KSQL statments:
+$result = $ksql->run('SHOW STREAMS', 'SHOW TABLES');
+
+// Stream KSQL queries as generators:
+$result = $ksql->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES');
 
 foreach($result as $row)
 {

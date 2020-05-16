@@ -1,5 +1,5 @@
 <?php
-namespace SeanMorris\Eventi;
+namespace SeanMorris\Ksqlc;
 class Ksqlc
 {
 	protected const
