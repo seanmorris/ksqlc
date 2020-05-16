@@ -78,7 +78,7 @@ Generators can be iterated with `foreach`.
 foreach($result as $row)
 {
 	// $row
-	// {"ROWKEY": "XXX", "ROWTIME": ".YYY", ...}
+	// {"ROWKEY": "XXX", "ROWTIME": "YYY", ...}
 }
 
 ```
