@@ -10,5 +10,10 @@
             "email": "<Sean Morris> ksqlc@seanmorr.is"
         }
     ],
+    "autoload" : {
+        "psr-4" : {
+            "SeanMorris\\Ksqlc\\" : "source/"
+        }
+    },
     "require": {}
 }
