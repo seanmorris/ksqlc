@@ -69,8 +69,12 @@ class Ksqlc
 
 		if($response->code !== static::HTTP_OK)
 		{
-			// @TODO throw
-			return FALSE;
+			throw new \UnexpectedValueException(
+				'Unexpected HTTP response: '
+					. PHP_EOL
+					. stream_get_contents($response->code)
+				, $response->code
+			);
 		}
 
 		stream_set_chunk_size($response->stream, 1);
@@ -153,17 +157,17 @@ class Ksqlc
 		fclose($response->stream);
 	}
 
-	public function get($path, $content = NULL)
+	protected function get($path, $content = NULL)
 	{
 		return $this->openRequest('GET', $path, $content);
 	}
 
-	public function post($path, $content = NULL)
+	protected function post($path, $content = NULL)
 	{
 		return $this->openRequest('POST', $path, $content);
 	}
 
-	public function openRequest($method, $path, $content = NULL)
+	protected function openRequest($method, $path, $content = NULL)
 	{
 		$context = stream_context_create(['http' => [
 			'ignore_errors' => true
