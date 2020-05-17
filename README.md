@@ -30,7 +30,7 @@ $ksqlc = new Ksqlc('http://your-ksql-server:8088/');
 
 ### Ksqlc::stream() - Streaming Queries
 
-Use `Ksqlc::stream()` to run `SELECT` queries. KSQLDB will push query results to you asynconously when you're using `Ksqlc::stream()`.
+KSQLDB will push query results to you asynconously when you're using `Ksqlc::stream()`.
 
 Ksqlc will return streaming queries as generators. These can be iterated with `foreach`.
 
@@ -83,7 +83,7 @@ $result = $ksqlc->stream($queryString, 'latest');   ## process new records
 
 ### Ksqlc::run() - Run KSQL a statment
 
-Use `Ksqlc::run()` to run KSQL statements other than `SELECT` statements. You'll do things like create or drop tables and streams with `Ksqlc::run()`.
+You'll do things like create or drop tables and streams with `Ksqlc::run()`.
 
 https://docs.confluent.io/4.1.0/ksql/docs/api.html#run-a-ksql-statement
 
