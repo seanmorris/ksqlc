@@ -24,22 +24,24 @@ final class FunctionalTest extends TestCase
 			'DROP STREAM IF EXISTS `event_stream`'
 		);
 
-		sleep(1);
-
 		[$streamCreated] = $ksqlc->run(<<<EOQ
 			CREATE STREAM `event_stream` (
 				`id` VARCHAR,
 				`body` VARCHAR,
 				`created` DOUBLE
 			) WITH (
-				VALUE_FORMAT = 'json',
+				VALUE_FORMAT = 'JSON',
 				KAFKA_TOPIC  = 'events',
+				KEY          = '`id`',
 				PARTITIONS   = 1
 			)
 			EOQ
 		);
 
-		sleep(1);
+		$this->assertEquals(
+			$streamCreated->status
+			, 'SUCCESS'
+		);
 
 		$this->assertInstanceOf(Status::CLASS, $streamCreated);
 
@@ -55,7 +57,7 @@ final class FunctionalTest extends TestCase
 		$this->assertObjectHasAttribute('warnings', $streams);
 		$this->assertObjectHasAttribute('statementText', $streams);
 
-		[$describe, $extended] = $ksqlc->run(
+		$describe = $ksqlc->run(
 			'DESCRIBE `event_stream`'
 			, 'DESCRIBE EXTENDED `event_stream`'
 		);
@@ -65,15 +67,17 @@ final class FunctionalTest extends TestCase
 
 		$query = sprintf('SELECT * FROM `event_stream` EMIT CHANGES LIMIT %d', $count);
 
-		$streamingResults = $ksqlc->stream($query);
+		$streamingResults = $ksqlc->stream($query, 'earliest');
 
 		for($i = 0; $i < $count; $i++)
 		{
-			$krest->produce('events', (object)[
+			$record = (object) [
 				'created' => microtime(true)
 				, 'body'  => 'Test event @ ' . date('r')
 				, 'id'    => uniqid()
-			]);
+			];
+
+			$response = $krest->produce('events', $record);
 		}
 
 		$got = 0;

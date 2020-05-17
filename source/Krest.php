@@ -29,6 +29,34 @@ class Krest
 		$this->endpoint = $endpoint;
 	}
 
+	public function topics()
+	{
+		$response = static::$Http::get(
+			$this->endpoint . '/topics'
+		);
+
+		if($response->code !== static::HTTP_OK)
+		{
+			throw new \UnexpectedValueException(
+				'Unexpected HTTP response: '
+					. PHP_EOL
+					. stream_get_contents($response->stream)
+				, $response->code
+			);
+		}
+
+		$raw = stream_get_contents($response->stream);
+
+		if(!$result = json_decode($raw))
+		{
+			throw new \UnexpectedValueException(
+				'Unexpected formatting in HTTP response.'
+			);
+		}
+
+		return $result;
+	}
+
 	/**
 	 * Send messages to a topic.
 	 *
@@ -37,10 +65,27 @@ class Krest
 	 */
 	public function produce($topic, ...$records)
 	{
+		foreach($records as &$record)
+		{
+			$record = ['value' => $record];
+		}
+
 		$response = static::$Http::post(
 			$this->endpoint . '/topics/' . $topic
-			, json_encode(['records' => $records]
-		));
+			, json_encode(['records' => $records])
+		);
+
+		if($response->code !== static::HTTP_OK)
+		{
+			throw new \UnexpectedValueException(
+				'Unexpected HTTP response: '
+					. PHP_EOL
+					. stream_get_contents($response->stream)
+				, $response->code
+			);
+		}
+
+		return $response;
 	}
 }
 
