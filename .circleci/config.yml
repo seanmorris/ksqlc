@@ -26,4 +26,4 @@ jobs:
     steps:
       - checkout
       - install-composer
-      - run: make build build-test
+      - run: make build-test test
