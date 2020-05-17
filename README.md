@@ -27,7 +27,7 @@ composer require seanmorris/ksqlc
 ```json
     {
         "require": {
-            "seanmorris/ksqlc": "0.0.0"
+            "seanmorris/ksqlc": "dev-master"
         }
     }
 ```
