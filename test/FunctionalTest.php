@@ -63,11 +63,9 @@ final class FunctionalTest extends TestCase
 		$delay = rand(1,1000) / 1000;
 		$count = rand(1,10);
 
-		sleep(1);
-
 		$query = sprintf('SELECT * FROM `event_stream` EMIT CHANGES LIMIT %d', $count);
 
-		$streamingResults = $ksqlc->stream($query, 'earliest');
+		$streamingResults = $ksqlc->stream($query);
 
 		for($i = 0; $i < $count; $i++)
 		{
