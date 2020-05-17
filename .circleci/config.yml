@@ -27,5 +27,5 @@ jobs:
       - checkout
       - install-composer
       - run: make pull-images build-test
-      - run: make start & sleep 30
+      - run: make start & sleep 120
       - run: make test
