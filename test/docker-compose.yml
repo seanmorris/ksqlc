@@ -1,0 +1,58 @@
+version: '2.4'
+
+services:
+
+  php:
+    restart: on-failure
+    volumes: ['../:/app']
+    image: seanmorris/ksqlc-test
+    build:
+      context: ../
+      dockerfile: test/Dockerfile
+    depends_on:
+      - ksql-server
+      
+  kafka:
+    restart: always
+    volumes: ['firehose:/bitnami']
+    image: bitnami/kafka:2
+    environment:
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      ALLOW_PLAINTEXT_LISTENER: 'yes'
+    depends_on:
+      - zookeeper
+
+  zookeeper:
+    restart: always
+    volumes: ['zoo:/bitnami']
+    image: bitnami/zookeeper:3
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: 'yes'
+
+  schema-registry:
+    restart: always
+    image: confluentinc/cp-schema-registry:latest
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:2181
+    depends_on:
+    - kafka
+    - zookeeper
+
+  ksql-server:
+    restart: always
+    image: confluentinc/ksqldb-server:latest
+    environment:
+      KSQL_KSQL_STREAMS_COMMIT_INTERVAL_MS: 250
+      KSQL_BOOTSTRAP_SERVERS: kafka:9092
+      KSQL_LISTENERS: http://0.0.0.0:8088
+      KSQL_KSQL_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+    depends_on:
+      - schema-registry
+
+volumes:
+  zoo:
+    driver: local
+  firehose:
+    driver: local
+    
