@@ -16,21 +16,20 @@
 <?php
 use \SeanMorris\Ksqlc\Ksqlc;
 
-$ksql = new Ksqlc('http://your-ksql-server:8088/');
+$ksqlc = new Ksqlc('http://your-ksql-server:8088/');
 
 ```
 
-#### Run KSQL a statment
+### Ksqlc::run() - Run KSQL a statment
 
-Ksql::run will return an array of results, with one element for each string provided:
+Ksqlc::run::run will return an array of results, with one element for each string provided:
 
 ```php
 <?php
-$single   = $ksql->run('SHOW QUERIES');
-$multiple = $ksql->run('SHOW STREAMS', 'SHOW TABLES');
-```
 
-`$single`
+$single = $ksqlc->run('SHOW QUERIES');
+
+```
 
 ```js
 [
@@ -48,7 +47,13 @@ $multiple = $ksql->run('SHOW STREAMS', 'SHOW TABLES');
 ]
 ```
 
-`$multiple`
+
+```php
+<?php
+
+$multiple = $ksqlc->run('SHOW STREAMS', 'SHOW TABLES');
+
+```
 
 ```js
 [
@@ -68,14 +73,14 @@ $multiple = $ksql->run('SHOW STREAMS', 'SHOW TABLES');
 ]
 ```
 
-#### Streaming Queries
+### Ksqlc::stream() - Streaming Queries
 
 Ksqlc will return streaming queries as generators:
 
 ```php
 <?php
 
-$result = $ksql->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES');
+$result = $ksqlc->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES');
 
 ```
 
@@ -92,12 +97,14 @@ foreach($result as $row)
 
 ```
 
+### Limits
+
 Queries with limits will terminate when the given number of rows have been iterated.
 
 ```php
 <?php
 
-$result = $ksql->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES LIMIT 20');
+$result = $ksqlc->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES LIMIT 20');
 
 ```
 
@@ -107,7 +114,7 @@ Queries without limits will run indefinitely, but can be terminated by destoryin
 ```php
 <?php
 
-$result = $ksql->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES');
+$result = $ksqlc->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES');
 
 foreach($result as $row)
 {
@@ -121,14 +128,16 @@ unset($result);
 
 ```
 
+### Offset Reset
+
 Streaming queries will **ONLY** select new records by default. Use the second param to `Ksqlc::stream()` to process all records from the beginning of time.
 
 
 ```php
 <?php
 
-$result = $ksql->stream($queryString, 'latest');   ## process new records
+$result = $ksqlc->stream($queryString, 'latest');   ## process new records
 
-$result = $ksql->stream($queryString, 'earliest'); ## process everything
+$result = $ksqlc->stream($queryString, 'earliest'); ## process everything
 
 ```
