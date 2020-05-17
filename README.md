@@ -83,9 +83,9 @@ $result = $ksqlc->stream($queryString, 'earliest'); ## process everything
 
 ### Ksqlc::run() - Run KSQL a statment
 
-*Use `Ksqlc::stream()` to run KSQL statements other than `SELECT` statements.*
+*Use `Ksqlc::run()` to run KSQL statements other than `SELECT` statements.*
 
-Ksqlc::run::run will return an array of results, with one element for each string provided:
+Ksqlc::run will return an array of results, with one element for each string provided:
 
 ```php
 <?php
