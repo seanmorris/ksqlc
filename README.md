@@ -126,7 +126,7 @@ $single = $ksqlc->run('SHOW QUERIES');
             "type": "STREAM",
             "name": "EVENT_STREAM",
             "topic": "EVENTS",
-            "format": "DELIMITED"
+            "format": "JSON"
         ],
         "warnings": []
     }
@@ -159,10 +159,16 @@ $multiple = $ksqlc->run('SHOW STREAMS', 'SHOW TABLES');
 
 ### To Do for v0.0.1:
 
-* Automated Unit Tests.
+* ~~Automated Unit Tests.~~
 * Endpoints such as `/info`, `/heathcheck`, etc.
-* API for activities enumerated in https://docs.confluent.io/4.1.0/ksql/docs/api.html
 * Map raw REST responses to Entites.
+  * DESCRIBE
+  * EXPLAIN
+  * SHOW
+  * TERMINATE
+  * CREATE
+  * DROP
+
 
 
 ### SeanMorris/Ksqlc

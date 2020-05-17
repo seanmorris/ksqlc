@@ -6,9 +6,11 @@ namespace SeanMorris\Ksqlc;
  */
 class Ksqlc
 {
-	protected const HTTP_OK = 200;
-
 	protected $endpoint;
+	protected const HTTP_OK = 200;
+	protected static $Http;
+
+	use Injectable;
 
 	/**
 	 * Return a new connection to KSQLDB.
@@ -28,7 +30,7 @@ class Ksqlc
 	}
 
 	/**
-	 * Return a new connection to KSQLDB.
+	 * Escape a string value for use in a KSQL query.
 	 * 
 	 * @param string $endpoint The URL to KSQLDB's REST endpoint.
 	 */
@@ -65,7 +67,7 @@ class Ksqlc
 
 		$string = implode(';', $strings) . ';';
 
-		$response = $this->post('ksql', json_encode([
+		$response = static::$Http::post('ksql', json_encode([
 			'ksql' => $string
 		]));
 
@@ -78,9 +80,28 @@ class Ksqlc
 			);
 		}
 
-		if(is_object($response))
+		if(!is_array($response))
 		{
 			$response = [$response];
+		}
+
+		foreach($responses as &$r)
+		{
+			if(!isset($r['@type']))
+			{
+				return;
+			}
+
+			$typeSuffix = strtolower(substr($r['@type'],0,-6));
+
+			if($typeSuffix == 'status')
+			{
+				$r = Status::ingest($r);
+			}
+			else
+			{
+				$r = Result::ingest($r);
+			}
 		}
 
 		return $response;
@@ -99,7 +120,7 @@ class Ksqlc
 	 */
 	public function stream($string, $offsetReset = 'latest')
 	{
-		$response = $this->post('query', json_encode([
+		$response = static::$Http::post('query', json_encode([
 			'ksql' => $string . ';'
 			, 'streamsProperties' => [
 				'ksql.streams.auto.offset.reset' => $offsetReset
@@ -195,94 +216,6 @@ class Ksqlc
 
 		fclose($response->stream);
 	}
-
-	/**
-	 * Issue an HTTP GET request to the KSQLDB endpoint.
-	 * 
-	 * @param string $path The path to request
-	 * @param object $content raw data to include with request
-	 * 
-	 * return object An object detailing the HTTP headers, with a readable STREAM containing the actual response body.
-	 */
-	protected function get($path, $content = NULL)
-	{
-		return $this->openRequest('GET', $path, $content);
-	}
-
-	/**
-	 * Issue an HTTP POST request to the KSQLDB endpoint.
-	 * 
-	 * @param string $path The path to request
-	 * @param object $content raw data to include with request
-	 * 
-	 * return object An object detailing the HTTP headers, with a readable STREAM containing the actual response body.
-	 */
-	protected function post($path, $content = NULL)
-	{
-		return $this->openRequest('POST', $path, $content);
-	}
-
-	/**
-	 * Issue an HTTP request to the KSQLDB endpoint.
-	 * 
-	 * @param string $method The HTTP method to use.
-	 * @param string $path The path to request
-	 * @param object $content raw data to include with request
-	 * 
-	 * return object An object detailing the HTTP headers, with a readable STREAM containing the actual response body.
-	 */
-	protected function openRequest($method, $path, $content = NULL)
-	{
-		$context = stream_context_create(['http' => [
-			'ignore_errors' => true
-			, 'content'     => $content
-			, 'method'      => $method
-			, 'header'      => [
-				'Content-Type: application/json; charset=utf-8'
-				, 'Accept: application/vnd.ksql.v1+json'
-			]
-		]]);
-
-		$handle = fopen(
-			'http://ksql-server:8088/' . $path
-			, 'r'
-			, FALSE
-			, $context
-		);
-
-		return array_reduce($http_response_header, function($carry, $header){
-
-			if(stripos($header, 'HTTP/') === 0)
-			{
-				$header = strtoupper($header);
-
-				[$httpVer, $code, $status] = sscanf(
-					$header, 'HTTP/%s %s %[ -~]'
-				);
-
-				$spacePos = strpos($header, ' ');
-
-				$carry->code   = (int) $code;
-				$carry->http   = $httpVer;
-				$carry->status = substr($header, 1 + $spacePos);
-			}
-
-			if(($split = stripos($header, ':')) !== FALSE)
-			{
-				$key   = substr($header, 0, $split);
-				$value = substr($header, 1 + $split);
-
-				$carry->header->$key = ltrim($value);
-			}
-
-			return $carry;
-
-		}, (object) [
-			'http'     => 0
-			, 'code'   => 0
-			, 'status' => 'ERROR'
-			, 'header' => (object) []
-			, 'stream' => $handle
-		]);
-	}
 }
+
+Ksqlc::inject(['Http' => Http::class]);
