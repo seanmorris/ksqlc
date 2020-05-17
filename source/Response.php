@@ -18,6 +18,11 @@ trait Response
 		if(isset($this->blob->{ $this->type }))
 		{
 			$result = $this->blob->{ $this->type };
+
+			if(static::SINGULAR)
+			{
+				return new ArrayIterator([$result]);
+			}
 		}
 
 		return new ArrayIterator($result);

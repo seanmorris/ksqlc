@@ -3,19 +3,19 @@ version: '2.4'
 services:
 
   php:
+    image: seanmorris/ksqlc-test
     restart: on-failure
     volumes: ['../:/app']
-    image: seanmorris/ksqlc-test
     build:
       context: ../
       dockerfile: test/Dockerfile
     depends_on:
       - ksql-server
-      
+
   kafka:
+    image: bitnami/kafka:2
     restart: always
     volumes: ['firehose:/bitnami']
-    image: bitnami/kafka:2
     environment:
       KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
       ALLOW_PLAINTEXT_LISTENER: 'yes'
@@ -23,15 +23,15 @@ services:
       - zookeeper
 
   zookeeper:
+    image: bitnami/zookeeper:3
     restart: always
     volumes: ['zoo:/bitnami']
-    image: bitnami/zookeeper:3
     environment:
       ALLOW_ANONYMOUS_LOGIN: 'yes'
 
   schema-registry:
-    restart: always
     image: confluentinc/cp-schema-registry:latest
+    restart: always
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:2181
@@ -40,8 +40,8 @@ services:
     - zookeeper
 
   ksql-server:
-    restart: always
     image: confluentinc/ksqldb-server:latest
+    restart: always
     environment:
       KSQL_KSQL_STREAMS_COMMIT_INTERVAL_MS: 250
       KSQL_BOOTSTRAP_SERVERS: kafka:9092
@@ -50,9 +50,22 @@ services:
     depends_on:
       - schema-registry
 
+  krest-server:
+    image: confluentinc/cp-kafka-rest:4.0.0
+    restart: always
+    ports: ['8082:8082']
+    environment:
+      KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      KAFKA_REST_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_REST_LISTENERS: http://0.0.0.0:8082
+      KAFKA_REST_HOST_NAME: krest-server
+    depends_on:
+      - kafka
+      - zookeeper
+      - schema-registry
+
 volumes:
   zoo:
     driver: local
   firehose:
     driver: local
-    

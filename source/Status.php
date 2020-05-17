@@ -6,6 +6,8 @@ namespace SeanMorris\Ksqlc;
  */
 class Status
 {
+	const SINGULAR = TRUE;
+
 	protected $status, $message, $warnings, $commandId, $error_code, $statementText;
 	use Ingestor;
 	use Response;

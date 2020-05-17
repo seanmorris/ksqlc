@@ -119,13 +119,17 @@ class Ksqlc
 		{
 			if(!isset($r->{ '@type' }))
 			{
-				return $rr = new Status;
+				$rr = new Status;
 			}
 			else
 			{
 				$typeSuffix = strtolower(substr($r->{'@type'},-6));
 
-				if($typeSuffix == 'status' || $typeSuffix == '_error')
+				if($r->{'@type'} === 'sourceDescription')
+				{
+					$rr = new Source;
+				}
+				else if($typeSuffix == 'status' || $typeSuffix == '_error')
 				{
 					$rr = new Status;
 				}

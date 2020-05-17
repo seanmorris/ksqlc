@@ -7,8 +7,10 @@ use \IteratorAggregate;
  */
 class Result implements IteratorAggregate
 {
+	const SINGULAR = FALSE;
+
 	protected $type, $statementText, $warnings;
 
 	use Ingestor;
-	use Response;	
+	use Response;
 }
