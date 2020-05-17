@@ -27,5 +27,5 @@ jobs:
       - checkout
       - install-composer
       - run: make pull-images build-test
-      - run: sleep 12
+      - run: docker-compose up
       - run: make test
