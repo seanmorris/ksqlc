@@ -28,7 +28,7 @@ $ksqlc = new Ksqlc('http://your-ksql-server:8088/');
 
 ```
 
-### Ksqlc::stream() - Streaming Queries
+### Ksqlc::stream() - Stream Queries Asynconously
 
 KSQLDB will push query results to you asynconously when you're using `Ksqlc::stream()`.
 
@@ -81,7 +81,7 @@ $result = $ksqlc->stream($queryString, 'latest');   ## process new records
 
 ```
 
-### Ksqlc::run() - Run KSQL a statment
+### Ksqlc::run() - Run a KSQL statment
 
 You'll do things like create or drop tables and streams with `Ksqlc::run()`.
 
