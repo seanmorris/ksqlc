@@ -7,14 +7,14 @@ namespace SeanMorris\Ksqlc;
 class Http
 {
 	/**
-	 * Issue an HTTP GET request to the KSQLDB endpoint.
+	 * Issue an HTTP GET request.
 	 * 
 	 * @param string $path The path to request
 	 * @param object $content raw data to include with request
 	 * 
 	 * @return object An object detailing the HTTP headers, with a readable STREAM containing the actual response body.
 	 */
-	protected static function get($url, $content = NULL)
+	public static function get($url, $content = NULL)
 	{
 		return static::openRequest('GET', $url);
 	}
@@ -27,13 +27,13 @@ class Http
 	 * 
 	 * @return object An object detailing the HTTP headers, with a readable STREAM containing the actual response body.
 	 */
-	protected static function post($path, $content = NULL)
+	public static function post($url, $content = NULL)
 	{
 		return static::openRequest('POST', $url, $content);
 	}
 
 	/**
-	 * Issue an HTTP request to the KSQLDB endpoint.
+	 * Issue an HTTP request.
 	 * 
 	 * Returns an object with the following properties:
 	 * 
@@ -49,7 +49,7 @@ class Http
 	 * 
 	 * @return object An object detailing the HTTP headers, with a readable stream resource containing the actual response body.
 	 */
-	protected static function openRequest($method, $url, $content = NULL)
+	public static function openRequest($method, $url, $content = NULL)
 	{
 		$context = stream_context_create(['http' => [
 			'ignore_errors' => true

@@ -1,6 +1,5 @@
 <?php
 namespace SeanMorris\Ksqlc;
-
 use \IteratorAggregate;
 
 /**

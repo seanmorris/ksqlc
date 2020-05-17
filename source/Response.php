@@ -15,9 +15,9 @@ trait Response
 	{
 		$result = [];
 
-		if(isset($this->blob[ $this->type ]))
+		if(isset($this->blob->{ $this->type }))
 		{
-			$result = $this->blob[ $this->type ];
+			$result = $this->blob->{ $this->type };
 		}
 
 		return new ArrayIterator($result);

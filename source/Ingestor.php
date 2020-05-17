@@ -17,14 +17,22 @@ trait Ingestor
 	 */
 	public function ingest($blob)
 	{
-		if(!isset($blob['@type']))
+		$blob = (object) $blob;
+
+		if(!isset($blob->{ '@type' }))
 		{
 			throw new \InvalidArgumentException(
 				'Blob does not specify a @type.'
 			);	
 		}
 
-		$this->type = $blob[ '@type' ];
+		$this->type = $blob->{ '@type' };
+
+		if(isset($blob->commandStatus))
+		{
+			$this->message = $blob->commandStatus->message;
+			$this->status  = $blob->commandStatus->status;
+		}
 
 		if($this->blob)
 		{
@@ -32,8 +40,6 @@ trait Ingestor
 				'Cannot ingest twice.'
 			);
 		}
-
-		$blob = (array) $blob;
 
 		$this->blob = $blob;
 
@@ -44,7 +50,7 @@ trait Ingestor
 				continue;
 			}
 
-			$this->{ $prop } = $blob[ $prop ];
+			$this->{ $prop } = $blob->{ $prop };
 		}
 	}
 

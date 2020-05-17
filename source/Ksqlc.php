@@ -14,7 +14,7 @@ class Ksqlc
 
 	/**
 	 * Return a new connection to KSQLDB.
-	 * 
+	 *
 	 * @param string $endpoint The URL to KSQLDB's REST endpoint.
 	 */
 	public function __construct($endpoint)
@@ -30,8 +30,48 @@ class Ksqlc
 	}
 
 	/**
+	 * Return server info.
+	 *
+	 */
+	public function info()
+	{
+		$http = static::$Http::get($this->endpoint . '/info');
+		$json = stream_get_contents($http->stream);
+		$body = json_decode($json);
+
+		if(!$body)
+		{
+			throw new \UnexpectedValueException(
+				'Unexpected formatting on query response.'
+			);
+		}
+
+		if(!$body->KsqlServerInfo)
+		{
+			throw new \UnexpectedValueException(
+				'Unexpected data structure on query response.'
+			);
+		}
+
+		return $body->KsqlServerInfo;
+	}
+	
+	/**
+	 * Return server health.
+	 *
+	 */
+	public function healthcheck()
+	{
+		$http = static::$Http::get($this->endpoint . '/healthcheck');
+		$json = stream_get_contents($http->stream);
+		$body = json_decode($json);
+
+		var_dump($body);
+	}
+
+	/**
 	 * Escape a string value for use in a KSQL query.
-	 * 
+	 *
 	 * @param string $endpoint The URL to KSQLDB's REST endpoint.
 	 */
 	public function escape($identifier)
@@ -41,18 +81,18 @@ class Ksqlc
 
 	/**
 	 * Run a KSQL statement.
-	 * 
+	 *
 	 * Use this method to do things like create
 	 * or drop streams and tables. Pretty much
 	 * everything but SELECT statments should be
 	 * executed with Ksqcl::run()
-	 * 
+	 *
 	 * Ksqcl::run() will execute all parameters
 	 * passed as queries and return an array
 	 * of result objects.
-	 * 
+	 *
 	 * @param string ...$strings The KSQL statement to execute.
-	 * 
+	 *
 	 * @return array The list of result objects from KSQLDB.
 	 */
 	public function run(...$strings)
@@ -65,11 +105,14 @@ class Ksqlc
 			}
 		}
 
-		$string = implode(';', $strings) . ';';
+		$string = implode('; ', $strings) . ';';
 
-		$response = static::$Http::post('ksql', json_encode([
-			'ksql' => $string
-		]));
+		$response = static::$Http::post(
+			$this->endpoint . '/ksql'
+			, json_encode([
+				'ksql' => $string
+			]
+		));
 
 		$rawResponse = stream_get_contents($response->stream);
 
@@ -85,23 +128,29 @@ class Ksqlc
 			$response = [$response];
 		}
 
-		foreach($responses as &$r)
+		foreach($response as &$r)
 		{
-			if(!isset($r['@type']))
+			if(!isset($r->{ '@type' }))
 			{
-				return;
-			}
-
-			$typeSuffix = strtolower(substr($r['@type'],0,-6));
-
-			if($typeSuffix == 'status')
-			{
-				$r = Status::ingest($r);
+				return $rr = new Status;
 			}
 			else
 			{
-				$r = Result::ingest($r);
+				$typeSuffix = strtolower(substr($r->{'@type'},-6));
+
+				if($typeSuffix == 'status' || $typeSuffix == '_error')
+				{
+					$rr = new Status;
+				}
+				else
+				{
+					$rr = new Result;
+				}
 			}
+
+			$rr->ingest($r);
+
+			$r = $rr;
 		}
 
 		return $response;
@@ -109,23 +158,26 @@ class Ksqlc
 
 	/**
 	 * Run an asyncronous KSQL query.
-	 * 
+	 *
 	 * Use this method to issue a select query
 	 * and stream the results back to PHP.
-	 * 
+	 *
 	 * @param string $endpoint The KSQL statement to execute.
 	 * @param string $offsetReset earliest/latest.
-	 * 
+	 *
 	 * @return Generator The generator that can be iterated for results.
 	 */
 	public function stream($string, $offsetReset = 'latest')
 	{
-		$response = static::$Http::post('query', json_encode([
-			'ksql' => $string . ';'
-			, 'streamsProperties' => [
-				'ksql.streams.auto.offset.reset' => $offsetReset
+		$response = static::$Http::post(
+			$this->endpoint . '/ksql'
+			, json_encode([
+				'ksql' => $string . ';'
+				, 'streamsProperties' => [
+					'ksql.streams.auto.offset.reset' => $offsetReset
+				]
 			]
-		]));
+		));
 
 		if($response->code !== static::HTTP_OK)
 		{
