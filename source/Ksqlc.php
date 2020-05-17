@@ -1,11 +1,20 @@
 <?php
 namespace SeanMorris\Ksqlc;
+
+/**
+ * Provides an interface to KSQLDB from PHP.
+ */
 class Ksqlc
 {
 	protected const HTTP_OK = 200;
 
 	protected $endpoint;
 
+	/**
+	 * Return a new connection to KSQLDB.
+	 * 
+	 * @param string $endpoint The URL to KSQLDB's REST endpoint.
+	 */
 	public function __construct($endpoint)
 	{
 		if(!filter_var($endpoint, FILTER_VALIDATE_URL))
@@ -18,11 +27,32 @@ class Ksqlc
 		$this->endpoint = $endpoint;
 	}
 
+	/**
+	 * Return a new connection to KSQLDB.
+	 * 
+	 * @param string $endpoint The URL to KSQLDB's REST endpoint.
+	 */
 	public function escape($identifier)
 	{
 		return str_replace("'", "''", $identifier);
 	}
 
+	/**
+	 * Run a KSQL statement.
+	 * 
+	 * Use this method to do things like create
+	 * or drop streams and tables. Pretty much
+	 * everything but SELECT statments should be
+	 * executed with Ksqcl::run()
+	 * 
+	 * Ksqcl::run() will execute all parameters
+	 * passed as queries and return an array
+	 * of result objects.
+	 * 
+	 * @param string ...$strings The KSQL statement to execute.
+	 * 
+	 * @return array The list of result objects from KSQLDB.
+	 */
 	public function run(...$strings)
 	{
 		foreach($strings as $i => &$s)
@@ -56,12 +86,23 @@ class Ksqlc
 		return $response;
 	}
 
-	public function stream($string, $reset = 'latest')
+	/**
+	 * Run an asyncronous KSQL query.
+	 * 
+	 * Use this method to issue a select query
+	 * and stream the results back to PHP.
+	 * 
+	 * @param string $endpoint The KSQL statement to execute.
+	 * @param string $offsetReset earliest/latest.
+	 * 
+	 * @return Generator The generator that can be iterated for results.
+	 */
+	public function stream($string, $offsetReset = 'latest')
 	{
 		$response = $this->post('query', json_encode([
 			'ksql' => $string . ';'
 			, 'streamsProperties' => [
-				'ksql.streams.auto.offset.reset' => $reset
+				'ksql.streams.auto.offset.reset' => $offsetReset
 			]
 		]));
 
@@ -155,16 +196,41 @@ class Ksqlc
 		fclose($response->stream);
 	}
 
+	/**
+	 * Issue an HTTP GET request to the KSQLDB endpoint.
+	 * 
+	 * @param string $path The path to request
+	 * @param object $content raw data to include with request
+	 * 
+	 * return object An object detailing the HTTP headers, with a readable STREAM containing the actual response body.
+	 */
 	protected function get($path, $content = NULL)
 	{
 		return $this->openRequest('GET', $path, $content);
 	}
 
+	/**
+	 * Issue an HTTP POST request to the KSQLDB endpoint.
+	 * 
+	 * @param string $path The path to request
+	 * @param object $content raw data to include with request
+	 * 
+	 * return object An object detailing the HTTP headers, with a readable STREAM containing the actual response body.
+	 */
 	protected function post($path, $content = NULL)
 	{
 		return $this->openRequest('POST', $path, $content);
 	}
 
+	/**
+	 * Issue an HTTP request to the KSQLDB endpoint.
+	 * 
+	 * @param string $method The HTTP method to use.
+	 * @param string $path The path to request
+	 * @param object $content raw data to include with request
+	 * 
+	 * return object An object detailing the HTTP headers, with a readable STREAM containing the actual response body.
+	 */
 	protected function openRequest($method, $path, $content = NULL)
 	{
 		$context = stream_context_create(['http' => [
