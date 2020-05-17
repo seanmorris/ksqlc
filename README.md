@@ -1,6 +1,6 @@
 ![avatar](https://avatars3.githubusercontent.com/u/640101?s=80&v=4)
 
-# SeanMorris/Ksqlc v0.0.0
+# SeanMorris/Ksqlc
 
 /*keɪ ɛs kyu ɛl si*/ • The PHP KSQL Connector
 
@@ -158,18 +158,6 @@ $multiple = $ksqlc->run('SHOW STREAMS', 'SHOW TABLES');
     }
 ]
 ```
-
-### To Do for v0.0.1:
-
-* ~~Automated Tests.~~
-* ~~`/info` Endpoints.~~
-* Map raw REST responses to Entites.
-  * TERMINATE
-  * DESCRIBE
-  * EXPLAIN
-  * ~~CREATE~~
-  * ~~SHOW~~
-  * ~~DROP~~
 
 ### SeanMorris/Ksqlc
 
