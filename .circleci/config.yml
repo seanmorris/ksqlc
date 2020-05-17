@@ -28,4 +28,4 @@ jobs:
       - install-composer
       - run: make pull-images build-test
       - run: sleep 12
-      - run: pull-images
+      - run: make test
