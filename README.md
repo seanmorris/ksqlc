@@ -34,7 +34,7 @@ composer require seanmorris/ksqlc
 
 ## Usage
 
-**NOTE** As this is version *0.0.0* , **the api is subject to change at any time.**
+**NOTE** As this is version *0.0.0* , **the api is subject to change.**
 
 #### Open a connection
 
