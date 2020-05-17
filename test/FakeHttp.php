@@ -21,6 +21,6 @@ class FakeHttp
 			, 'status' => '0 ERROR'
 			, 'header' => (object) []
 			, 'stream' => false
-		]);
+		];
 	}
 }
