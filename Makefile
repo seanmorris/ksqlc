@@ -7,6 +7,9 @@ test:
 build-test:
 	docker-compose -f test/docker-compose.yml build
 
+start:
+	docker-compose -f test/docker-compose.yml up
+
 stop:
 	docker-compose -f test/docker-compose.yml down
 
