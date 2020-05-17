@@ -26,6 +26,8 @@ $ksqlc = new Ksqlc('http://your-ksql-server:8088/');
 
 Ksqlc will return streaming queries as generators. These can be iterated with `foreach`.
 
+Queries will return results until a limit is reached or the programmer breaks the loop  and destroys the reference.
+
 ```php
 <?php
 
@@ -33,9 +35,15 @@ $result = $ksqlc->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES');
 
 foreach($result as $row)
 {
-	// $row
-	// {"ROWKEY": "XXX", "ROWTIME": "YYY", ...}
+	// $row ={"ROWKEY": "XXX", "ROWTIME": "YYY", ...}
+
+	if($row->property === 'something')
+	{
+		break;
+	}
 }
+
+unset($result);
 
 ```
 
@@ -49,25 +57,6 @@ Queries with limits will terminate when the given number of rows have been itera
 $result = $ksqlc->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES LIMIT 20');
 
 foreach($result as $row) { /* Stream processing... */ }
-
-```
-
-Queries without limits will run indefinitely, but can be terminated by destorying the reference:
-
-```php
-<?php
-
-$result = $ksqlc->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES');
-
-foreach($result as $row)
-{
-	if($row->property === 'something')
-	{
-		break;
-	}
-}
-
-unset($result);
 
 ```
 
