@@ -3,14 +3,14 @@ version: 2.1
 commands:
   install-composer:
     steps:
-      - run:
-        - sudo apt install -y software-properties-common
-        - sudo add-apt-repository -y ppa:ondrej/php
-        - sudo apt-get update
-        - sudo apt-get install -y php7.3-cli php7.3-common php7.3-mbstring php7.3-intl php7.3-zip php7.3-bcmath php7.3-dom
-        - curl -s https://getcomposer.org/installer | php
-        - sudo mv composer.phar /usr/local/bin/composer
-        - composer install
+      - run: |
+          sudo apt install -y software-properties-common
+          sudo add-apt-repository -y ppa:ondrej/php
+          sudo apt-get update
+          sudo apt-get install -y php7.3-cli php7.3-common php7.3-mbstring php7.3-intl php7.3-zip php7.3-bcmath php7.3-dom
+          curl -s https://getcomposer.org/installer | php
+          sudo mv composer.phar /usr/local/bin/composer
+          composer install
 
 workflows:
   version: 2
