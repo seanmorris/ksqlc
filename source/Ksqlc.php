@@ -157,7 +157,7 @@ class Ksqlc
 	public function stream($string, $offsetReset = 'latest')
 	{
 		$response = static::$Http::post(
-			$this->endpoint . '/ksql'
+			$this->endpoint . '/query'
 			, json_encode([
 				'ksql' => $string . ';'
 				, 'streamsProperties' => [
