@@ -28,7 +28,7 @@ composer require seanmorris/ksqlc
     {
         "require": {
             "seanmorris/ksqlc": "0.0.0"
-        },
+        }
     }
 ```
 
@@ -123,10 +123,12 @@ $single = $ksqlc->run('SHOW QUERIES');
         "@type": "queries",
         "statementText": "SHOW QUERIES;",
         "queries": [
-            "type": "STREAM",
-            "name": "EVENT_STREAM",
-            "topic": "EVENTS",
-            "format": "JSON"
+            [
+                "type": "STREAM",
+                "name": "EVENT_STREAM",
+                "topic": "EVENTS",
+                "format": "JSON"
+            ],
         ],
         "warnings": []
     }
@@ -160,16 +162,14 @@ $multiple = $ksqlc->run('SHOW STREAMS', 'SHOW TABLES');
 ### To Do for v0.0.1:
 
 * ~~Automated Unit Tests.~~
-* Endpoints such as `/info`, `/heathcheck`, etc.
+* ~~Endpoints such as `/info`.~~
 * Map raw REST responses to Entites.
+  * TERMINATE
   * DESCRIBE
   * EXPLAIN
-  * SHOW
-  * TERMINATE
-  * CREATE
-  * DROP
-
-
+  * ~~CREATE~~
+  * ~~SHOW~~
+  * ~~DROP~~
 
 ### SeanMorris/Ksqlc
 

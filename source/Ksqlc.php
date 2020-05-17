@@ -55,19 +55,6 @@ class Ksqlc
 
 		return $body->KsqlServerInfo;
 	}
-	
-	/**
-	 * Return server health.
-	 *
-	 */
-	public function healthcheck()
-	{
-		$http = static::$Http::get($this->endpoint . '/healthcheck');
-		$json = stream_get_contents($http->stream);
-		$body = json_decode($json);
-
-		var_dump($body);
-	}
 
 	/**
 	 * Escape a string value for use in a KSQL query.

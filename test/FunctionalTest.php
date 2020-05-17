@@ -32,8 +32,6 @@ final class FunctionalTest extends TestCase
 			EOQ
 		);
 
-		var_dump($streamCreated);
-
 		$this->assertInstanceOf(Status::CLASS, $streamCreated);
 
 		$this->assertObjectHasAttribute('type', $streamCreated);
@@ -148,8 +146,6 @@ final class FunctionalTest extends TestCase
 			, 'DROP STREAM `event_stream`'
 		);
 
-		var_dump($streamCreated, $streamDropped);
-		
 		$this->assertInstanceOf(Status::CLASS, $streamCreated);
 
 		$this->assertObjectHasAttribute('type', $streamCreated);
