@@ -18,16 +18,16 @@ Install via the [composer cli](https://getcomposer.org/doc/03-cli.md#require):
 
 ```bash
 
-composer require seanmorris/ids
+composer require seanmorris/ksqlc
 
 ```
 
-... or add `SeanMorris/Ksqlc` to your [`composer.json`](https://getcomposer.org/doc/01-basic-usage.md#composer-json-project-setup):
+... or add `seanmorris/ksqlc` to your [`composer.json`](https://getcomposer.org/doc/01-basic-usage.md#composer-json-project-setup):
 
 ```json
     {
         "require": {
-            "SeanMorris/Ksqlc": "0.0.0"
+            "seanmorris/ksqlc": "0.0.0"
         },
     }
 ```
