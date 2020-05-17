@@ -70,7 +70,7 @@ class Ksqlc
 			throw new \UnexpectedValueException(
 				'Unexpected HTTP response: '
 					. PHP_EOL
-					. stream_get_contents($response->code)
+					. stream_get_contents($response->stream)
 				, $response->code
 			);
 		}

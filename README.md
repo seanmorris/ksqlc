@@ -35,10 +35,15 @@ $multiple = $ksql->run('SHOW STREAMS', 'SHOW TABLES');
 ```js
 [
     {
-        "queries": [...], ## results are in here
         "@type": "queries",
         "statementText": "SHOW QUERIES;",
-        "warnings": [...]
+        "queries": [
+            "type": "STREAM",
+            "name": "EVENT_STREAM",
+            "topic": "EVENTS",
+            "format": "DELIMITED"
+        ],
+        "warnings": []
     }
 ]
 ```
@@ -48,15 +53,16 @@ $multiple = $ksql->run('SHOW STREAMS', 'SHOW TABLES');
 ```js
 [
     {
-        "tables": [...], ## results are in here
         "@type": "tables",
         "statementText": "SHOW STREAMS;",
+        "tables": [...], ## results are in here
         "warnings": [...]
     },
+
     {
-        "queries": [...], ## results are in here
         "@type": "queries",
         "statementText": "SHOW TABLES;",
+        "queries": [...], ## results are in here
         "warnings": [...]
     }
 ]
