@@ -8,7 +8,10 @@ build-test:
 	docker-compose -f test/docker-compose.yml build
 
 start:
-	docker-compose -f test/docker-compose.yml up
+	docker-compose -f test/docker-compose.yml up -d
+
+wait:
+	sleep 60
 
 stop:
 	docker-compose -f test/docker-compose.yml down
