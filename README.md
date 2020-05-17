@@ -2,7 +2,7 @@
 
 # SeanMorris/Ksqlc v0.0.0
 
-/*keɪ ɛs kyu ɛl siː*/ • The PHP KSQL Connector
+/*keɪ ɛs kyu ɛl si*/ • The PHP KSQL Connector
 
 Ksqlc is free for distribution, modification, and redistribution under the [Apache-2.0 license](https://raw.githubusercontent.com/seanmorris/ksqlc/master/LICENSE).
 
