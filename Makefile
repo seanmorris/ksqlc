@@ -5,7 +5,13 @@ test:
 		/app/vendor/bin/phpunit --testdox test/
 
 build-test:
-	docker-compose -f test/docker-compose.yml build 
+	docker-compose -f test/docker-compose.yml build
 
 stop:
 	docker-compose -f test/docker-compose.yml down
+
+push-images:
+	docker-compose -f test/docker-compose.yml push
+
+pull-images:
+	docker-compose -f test/docker-compose.yml pull
