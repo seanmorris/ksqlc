@@ -26,4 +26,7 @@ jobs:
     steps:
       - checkout
       - install-composer
-      - run: make build-test start wait test push-coverage
+      - run: make PHP_VERSION=7.1 build-test start wait test push-coverage
+      - run: make PHP_VERSION=7.2 build-test start wait test push-coverage
+      - run: make PHP_VERSION=7.3 build-test start wait test push-coverage
+      - run: make PHP_VERSION=7.4 build-test start wait test push-coverage

@@ -13,7 +13,7 @@ test:
 	docker-compose -f test/docker-compose.yml run php \
 		/app/vendor/bin/phpunit \
 			--testdox test \
-			--whitelist=test/ \
+			--whitelist=source/ \
 			--coverage-clover=/app/coverage.xml \
 			test/
 
