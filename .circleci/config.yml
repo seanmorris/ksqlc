@@ -17,11 +17,11 @@ workflows:
 
   test:
     jobs:
-      - test-7.0
-      - test-7.1
-      - test-7.2
-      - test-7.3
-      - test-7.4
+      - test-7_0
+      - test-7_1
+      - test-7_2
+      - test-7_3
+      - test-7_4
 
 jobs:
   test-7_0:
