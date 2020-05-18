@@ -33,8 +33,6 @@ $ composer require seanmorris/ksqlc
 
 Grab the URL to your KSQL server's REST endpoint, and it use it to create a new `Ksqlc` object to begin:
 
-https://docs.confluent.io/4.1.0/ksql/docs/api.html#rest-endpoint
-
 ```php
 <?php
 use \SeanMorris\Ksqlc\Ksqlc;
@@ -132,8 +130,6 @@ foreach($stream as $row) {
 ### Ksqlc::run() - Run a KSQL statment
 
 You'll do things like create or drop tables and streams with `Ksqlc::run()`.
-
-https://docs.confluent.io/4.1.0/ksql/docs/api.html#run-a-ksql-statement
 
 Ksqlc::run will return an iterable object of results with metadata properties:
 
