@@ -158,7 +158,7 @@ class Ksqlc
 	 *
 	 * @return Generator The generator that can be iterated for results.
 	 */
-	public function stream($string, $offsetReset = 'latest')
+	public function stream($string, $offsetReset = 'latest', $async = FALSE)
 	{
 		$response = static::$Http::post(
 			$this->endpoint . '/query'
@@ -182,6 +182,7 @@ class Ksqlc
 
 		stream_set_chunk_size($response->stream, 1);
 		stream_set_read_buffer($response->stream, 0);
+		stream_set_blocking($response->stream, !$async);
 
 		while($message = fgets($response->stream))
 		{
@@ -222,8 +223,15 @@ class Ksqlc
 
 		$keys = array_keys($keyTypes);
 
-		while($message = fgets($response->stream))
+		while(!feof($response->stream))
 		{
+			$message = fgets($response->stream);
+
+			if($message === NULL)
+			{
+				continue;
+			}
+
 			if(!$message = rtrim($message))
 			{
 				continue;
@@ -258,6 +266,25 @@ class Ksqlc
 		}
 
 		fclose($response->stream);
+	}
+
+	public function multiplex(...$queries)
+	{
+		$outerIterator = new StreamIterator();
+
+		foreach($queries as $query)
+		{
+			if(!is_array($query))
+			{
+				$query = [$query];
+			}
+
+			$resultStream = $this->stream(...$query);
+
+			$outerIterator->attachIterator($resultStream);
+		}
+
+		return $outerIterator;
 	}
 }
 

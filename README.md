@@ -54,9 +54,9 @@ Queries will return results until a limit is reached or the programmer breaks th
 ```php
 <?php
 
-$result = $ksqlc->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES');
+$stream = $ksqlc->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES');
 
-foreach($result as $row)
+foreach($stream as $row)
 {
 	// $row == {"ROWKEY": "XXX", "ROWTIME": "YYY", ...}
 
@@ -82,7 +82,16 @@ $result = $ksqlc->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES LIMIT 20');
 foreach($result as $row) { /* Stream processing... */ }
 
 ```
+### Ksqlc::multiplex() - Stream Mutliple Queries
 
+```php
+<?php
+
+$streamingResults = $ksqlc->multiplex(
+	[sprintf($query, 'AAA', $count), 'earliest']
+	, [sprintf($query, 'BBB', $count), 'earliest']
+);
+```
 ### Offset Reset
 
 Streaming queries will **ONLY** select new records by default. Use the second param to `Ksqlc::stream()` to process all records from the beginning of time.
@@ -131,9 +140,10 @@ foreach($results as $table)
 }
 ```
 
-You can use list destructuring to get the results of multiple queries all at once:
+You can also use list destructuring to get the results of multiple queries all at once:
 
 ```php
+<?php
 
 [$streams, $tables] = $ksqlc->run('SHOW STREAMS', 'SHOW TABLES');
 

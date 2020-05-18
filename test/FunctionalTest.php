@@ -1,7 +1,7 @@
 <?php
 namespace SeanMorris\Ksqlc\Test;
 
-use PHPUnit\Framework\TestCase, \InvalidArgumentException, \SeanMorris\Ksqlc\Ksqlc, \SeanMorris\Ksqlc\Status, \SeanMorris\Ksqlc\Result, \SeanMorris\Ksqlc\Krest;
+use PHPUnit\Framework\TestCase, \InvalidArgumentException, \SeanMorris\Ksqlc\Ksqlc, \SeanMorris\Ksqlc\Status, \SeanMorris\Ksqlc\Result, \SeanMorris\Ksqlc\Krest, \stdClass;
 
 final class FunctionalTest extends TestCase
 {
@@ -65,29 +65,62 @@ final class FunctionalTest extends TestCase
 		$delay = rand(1,1000) / 1000;
 		$count = rand(1,10);
 
-		$query = sprintf('SELECT * FROM `event_stream` EMIT CHANGES LIMIT %d', $count);
+		$query = <<<EOQ
+			SELECT *
+			FROM  `event_stream`
+			WHERE `body` = '%s'
+			EMIT CHANGES
+			LIMIT %d
+			EOQ;
 
-		$streamingResults = $ksqlc->stream($query, 'earliest');
+		$streamingResults = $ksqlc->multiplex(
+			[sprintf($query, 'AAA', $count), 'earliest', TRUE]
+			, [sprintf($query, 'BBB', $count), 'earliest', TRUE]
+		);
 
 		for($i = 0; $i < $count; $i++)
 		{
-			$record = (object) [
+			$recordA = (object) [
 				'created' => microtime(true)
-				, 'body'  => 'Test event @ ' . date('r')
+				, 'body'  => 'AAA'
 				, 'id'    => uniqid()
 			];
 
-			$response = $krest->produce('events', $record);
+			$recordB = (object) [
+				'created' => microtime(true)
+				, 'body'  => 'BBB'
+				, 'id'    => uniqid()
+			];
+
+			$recordC = (object) [
+				'created' => microtime(true)
+				, 'body'  => 'CCC'
+				, 'id'    => uniqid()
+			];
+
+			$response = $krest->produce(
+				'events'
+				, $recordA
+				, $recordB
+				, $recordC
+			);
 		}
 
 		$got = 0;
 
 		foreach($streamingResults as $streamingResult)
 		{
+			if(!$streamingResult)
+			{
+				continue;
+			}
+
+			$this->assertInstanceOf(stdClass::CLASS, $streamingResult);
+
 			$got++;
 		}
 
-		$this->assertEquals($got, $count);
+		$this->assertEquals($got, 2 * $count);
 
 		[$streamDropped] = $ksqlc->run('DROP STREAM `event_stream`');
 
@@ -129,13 +162,6 @@ final class FunctionalTest extends TestCase
 		$this->assertObjectHasAttribute('type', $tables);
 		$this->assertObjectHasAttribute('warnings', $tables);
 		$this->assertObjectHasAttribute('statementText', $tables);
-
-		var_dump($tables);
-
-		foreach($tables as $table)
-		{
-			var_dump($table);
-		}
 
 		[$describe, $extended] = $ksqlc->run(
 			'DESCRIBE `event_table`'
