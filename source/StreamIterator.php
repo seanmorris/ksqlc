@@ -3,20 +3,34 @@ namespace SeanMorris\Ksqlc;
 
 use \Iterator, \MultipleIterator, \NoRewindIterator;
 
+/**
+ * Serialize multiple streams into a single iterator via interpolation.
+ *
+ * Handles async streams.
+ */
 class StreamIterator extends MultipleIterator
 {
 	protected $current = [];
 
+	/**
+	 * Return a new StreamIterator.
+	 */
 	public function __construct()
 	{
 		parent::__construct(MultipleIterator::MIT_NEED_ANY);
 	}
 
-	public function attachIterator(Iterator $iterator, $info = NULL)
+	/**
+	 * Attach a new stream generator.
+	 */
+	public function attachIterator(Generator $iterator, $info = NULL)
 	{
 		parent::attachIterator(new NoRewindIterator($iterator), $info);
 	}
 
+	/**
+	 * Return the data from the current stream.
+	 */
 	public function current()
 	{
 		if(!$this->current)
@@ -27,6 +41,9 @@ class StreamIterator extends MultipleIterator
 		return array_shift($this->current);
 	}
 
+	/**
+	 * Move to the next stream, or next overall iteration.
+	 */
 	public function next()
 	{
 		if(!$this->current)
