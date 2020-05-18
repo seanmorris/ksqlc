@@ -22,9 +22,9 @@ $ composer require seanmorris/ksqlc
 ... or add `seanmorris/ksqlc` to your [`composer.json`](https://getcomposer.org/doc/01-basic-usage.md#composer-json-project-setup):
 
 ```json
-    "require": {
-        "seanmorris/ksqlc": "dev-master"
-    }
+	"require": {
+		"seanmorris/ksqlc": "dev-master"
+	}
 ```
 
 ## Usage
@@ -102,54 +102,41 @@ You'll do things like create or drop tables and streams with `Ksqlc::run()`.
 
 https://docs.confluent.io/4.1.0/ksql/docs/api.html#run-a-ksql-statement
 
-Ksqlc::run will return an array of results, with one element for each string provided:
+Ksqlc::run will return an iterable object of results with metadata properties:
 
 ```php
 <?php
 
-$single = $ksqlc->run('SHOW QUERIES');
+$results = $ksqlc->run('SHOW TABLES')
 
+var_dump( $results );
+
+// object SeanMorris\Ksqlc\Result {
+//  $type          => "tables"
+//  $warnings      => {}
+//  $statementText => "SHOW TABLES"
+// }
+
+foreach($results as $table)
+{
+	var_dump( $table );
+
+	// object stdClass {
+	// 	$type       => "TABLE"
+	// 	$name       => "event_table"
+	// 	$topic      => "event_table"
+	// 	$format     => "JSON"
+	// 	$isWindowed => false
+	// }
+}
 ```
-```js
-[
-    {
-        "@type": "queries",
-        "statementText": "SHOW QUERIES;",
-        "queries": [
-            [
-                "type": "STREAM",
-                "name": "EVENT_STREAM",
-                "topic": "EVENTS",
-                "format": "JSON"
-            ],
-        ],
-        "warnings": []
-    }
-]
-```
+
+You can use list destructuring to get the results of multiple queries all at once:
 
 ```php
-<?php
 
-$multiple = $ksqlc->run('SHOW STREAMS', 'SHOW TABLES');
+[$streams, $tables] = $ksqlc->run('SHOW STREAMS', 'SHOW TABLES');
 
-```
-```js
-[
-    {
-        "@type": "streams",
-        "statementText": "SHOW STREAMS;",
-        "streams": [...], ## results are in here
-        "warnings": [...]
-    },
-
-    {
-        "@type": "tables",
-        "statementText": "SHOW TABLES;",
-        "tables": [...], ## results are in here
-        "warnings": [...]
-    }
-]
 ```
 
 ### SeanMorris/Ksqlc

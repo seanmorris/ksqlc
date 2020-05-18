@@ -130,6 +130,13 @@ final class FunctionalTest extends TestCase
 		$this->assertObjectHasAttribute('warnings', $tables);
 		$this->assertObjectHasAttribute('statementText', $tables);
 
+		var_dump($tables);
+
+		foreach($tables as $table)
+		{
+			var_dump($table);
+		}
+
 		[$describe, $extended] = $ksqlc->run(
 			'DESCRIBE `event_table`'
 			, 'DESCRIBE EXTENDED `event_table`'

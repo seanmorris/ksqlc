@@ -2,6 +2,10 @@
     "name": "seanmorris/ksqlc",
     "version": "0.0.1",
     "description": "The Asynchronous PHP KSQL Connector",
+	"keywords": [
+		"kafka",
+		"ksql"
+	],
     "type": "library",
     "license": "Apache-2.0",
     "authors": [
@@ -16,6 +20,9 @@
             , "SeanMorris\\Ksqlc\\" : "source/"
         }
     },
+    "require": {
+    	"php": "^7.1"
+	},
     "require-dev": {
         "phpunit/phpunit": "^9"
     }
