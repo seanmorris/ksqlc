@@ -22,7 +22,7 @@ start:
 	docker-compose -f test/docker-compose.yml up -d
 
 wait:
-	sleep 45
+	sleep 120
 
 stop:
 	PHP_VERSION=${PHP_VERSION} \
