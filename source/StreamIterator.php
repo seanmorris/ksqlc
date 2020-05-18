@@ -1,7 +1,7 @@
 <?php
 namespace SeanMorris\Ksqlc;
 
-use \Generator, \Iterator, \MultipleIterator, \NoRewindIterator;
+use \Iterator, \MultipleIterator, \NoRewindIterator;
 
 /**
  * Serialize multiple streams into a single iterator via interpolation.
@@ -23,7 +23,7 @@ class StreamIterator extends MultipleIterator
 	/**
 	 * Attach a new stream generator.
 	 */
-	public function attachIterator(Generator $iterator, $info = NULL)
+	public function attachIterator(Iterator $iterator, $info = NULL)
 	{
 		parent::attachIterator(new NoRewindIterator($iterator), $info);
 	}
