@@ -76,10 +76,12 @@ You can loop over multiple queries at once with `Ksqlc::multiplex()`. Each param
 $queryOne = 'SELECT * FROM EVENTS WHERE BODY = "AAA" EMIT CHANGES LIMIT 20';
 $queryTwo = 'SELECT * FROM STREAM WHERE BODY = "BBB" EMIT CHANGES LIMIT 20';
 
-$streamingResults = $ksqlc->multiplex(
+$stream = $ksqlc->multiplex(
 	[$queryOne, 'earliest'],
 	[$queryTwo, 'earliest']
 );
+
+foreach($stream as $row) { /* Stream processing... */ }
 
 ```
 
