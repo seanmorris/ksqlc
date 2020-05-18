@@ -1,7 +1,7 @@
 <?php
 namespace SeanMorris\Ksqlc;
 
-use \Iterator, \MultipleIterator, \NoRewindIterator;
+use \Generator, \Iterator, \MultipleIterator, \NoRewindIterator;
 
 /**
  * Serialize multiple streams into a single iterator via interpolation.
