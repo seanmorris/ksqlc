@@ -4,6 +4,8 @@
 
 /*keɪ ɛs kyu ɛl si*/ • The Asynchronous PHP KSQL Connector
 
+Ksqlc provides a PHP interface to Confluent KSQL & Apache Kafka.
+
 Ksqlc is free for distribution, modification, and use under the [Apache-2.0 license](https://raw.githubusercontent.com/seanmorris/ksqlc/master/LICENSE).
 
 [Docs](http://docs.ksqlc.seanmorr.is/) | [Github](http://github.com/seanmorris/ksqlc) | [Packagist](https://packagist.org/packages/seanmorris/ksqlc)
