@@ -129,7 +129,7 @@ foreach($stream as $row) {
 
 ### Ksqlc::run() - Run a KSQL statment
 
-You'll do things like create or drop tables and streams with `Ksqlc::run()`.
+You'll do things like create or drop tables and streams with `Ksqlc::run()`. Any statement that isnt a direct `SELECT` should be passed to `Ksqlc::run()`.
 
 Ksqlc::run will return an iterable object of results with metadata properties:
 
