@@ -26,4 +26,4 @@ jobs:
     steps:
       - checkout
       - install-composer
-      - run: make build-test pull-images start wait test
+      - run: make build-test start wait test push-coverage

@@ -17,7 +17,6 @@ test:
 			--coverage-clover=/app/coverage.xml \
 			test/
 
-
 start:
 	PHP_VERSION=${PHP_VERSION} \
 	docker-compose -f test/docker-compose.yml up -d
