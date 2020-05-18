@@ -17,14 +17,49 @@ workflows:
 
   test:
     jobs:
-      - test
+      - test-7.0
+      - test-7.1
+      - test-7.2
+      - test-7.3
+      - test-7.4
 
 jobs:
-  test:
+  test-7_0:
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+      - install-composer
+      - run: make PHP_VERSION=7.0 build-test start wait test push-coverage stop
+
+  test-7_1:
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+      - install-composer
+      - run: make PHP_VERSION=7.1 build-test start wait test push-coverage stop
+
+  test-7_2:
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+      - install-composer
+      - run: make PHP_VERSION=7.2 build-test start wait test push-coverage stop
+
+  test-7_3:
     machine:
       image: ubuntu-1604:201903-01
     steps:
       - checkout
       - install-composer
       - run: make PHP_VERSION=7.3 build-test start wait test push-coverage stop
+
+  test-7_4:
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+      - install-composer
       - run: make PHP_VERSION=7.4 build-test start wait test push-coverage stop

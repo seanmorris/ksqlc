@@ -6,8 +6,8 @@ namespace SeanMorris\Ksqlc;
  */
 class Ksqlc
 {
+	const HTTP_OK = 200;
 	protected $endpoint;
-	protected const HTTP_OK = 200;
 	protected static $Http;
 
 	use Injectable;
@@ -103,6 +103,7 @@ class Ksqlc
 
 		$rawResponse = stream_get_contents($response->stream);
 
+
 		if(!$response = json_decode($rawResponse))
 		{
 			throw new \UnexpectedValueException(
@@ -170,7 +171,7 @@ class Ksqlc
 			]
 		));
 
-		if($response->code !== static::HTTP_OK)
+		if($response->code !== HTTP::STATUS_OK)
 		{
 			throw new \UnexpectedValueException(
 				'Unexpected HTTP response: '
@@ -180,24 +181,33 @@ class Ksqlc
 			);
 		}
 
-		stream_set_chunk_size($response->stream, 1);
-		stream_set_read_buffer($response->stream, 0);
-		stream_set_blocking($response->stream, !$async);
+		$buffer = NULL;
 
-		while($message = fgets($response->stream))
+		while(!feof($response->stream))
 		{
-			if(!$message = rtrim($message))
+			$buffer .= fgets($response->stream);
+
+			if(substr($buffer, -1) !== "\n")
 			{
 				continue;
 			}
 
-			$message = substr($message, 0, -1);
+			if(!$buffer = rtrim($buffer))
+			{
+				continue;
+			}
 
-			[$message] = sscanf($message, '[%[^\0]');
+			$buffer   = substr($buffer, 0, -1);
+			list($buffer) = sscanf($buffer, '[%[^\0]');
+
 			break;
 		}
 
-		if(!$record = json_decode($message))
+		stream_set_chunk_size($response->stream, 1);
+		stream_set_read_buffer($response->stream, 0);
+		stream_set_blocking($response->stream, !$async);
+
+		if(!$record = json_decode($buffer))
 		{
 			throw new \UnexpectedValueException(
 				'Unexpected formatting on first line of stream.'
@@ -216,35 +226,43 @@ class Ksqlc
 
 		foreach($keyDefs as $keyDef)
 		{
-			[$key, $type] = sscanf($keyDef, '`%[^\`]` %s');
+			list($key, $type) = sscanf($keyDef, '`%[^\`]` %s');
 
 			$keyTypes[ $key ] = $type;
 		}
 
-		$keys = array_keys($keyTypes);
+		$buffer = NULL;
+		$keys   = array_keys($keyTypes);
 
 		while(!feof($response->stream))
 		{
-			$message = fgets($response->stream);
+			$buffer .= fgets($response->stream);
 
-			if($message === NULL)
+			if(substr($buffer, -1) !== "\n")
 			{
 				continue;
 			}
 
-			if(!$message = rtrim($message))
+			if($buffer === NULL)
 			{
 				continue;
 			}
 
-			$message = substr($message, 0, -1);
+			if(!$buffer = rtrim($buffer))
+			{
+				continue;
+			}
 
-			if(!$record = json_decode($message))
+			$buffer = substr($buffer, 0, -1);
+
+			if(!$record = json_decode($buffer))
 			{
 				throw new \UnexpectedValueException(
 					'Unexpected formatting in stream body.'
 				);
 			}
+
+			$buffer = '';
 
 			if($record->finalMessage ?? 0)
 			{
@@ -284,7 +302,7 @@ class Ksqlc
 			$outerIterator->attachIterator($resultStream);
 		}
 
-		return $outerIterator;
+		yield from $outerIterator;
 	}
 }
 

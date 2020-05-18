@@ -7,7 +7,6 @@ namespace SeanMorris\Ksqlc;
 class Krest
 {
 	protected $endpoint;
-	protected const HTTP_OK = 200;
 	protected static $Http;
 
 	use Injectable;
@@ -35,7 +34,7 @@ class Krest
 			$this->endpoint . '/topics'
 		);
 
-		if($response->code !== static::HTTP_OK)
+		if($response->code !== HTTP::STATUS_OK)
 		{
 			throw new \UnexpectedValueException(
 				'Unexpected HTTP response: '
@@ -75,7 +74,7 @@ class Krest
 			, json_encode(['records' => $records])
 		);
 
-		if($response->code !== static::HTTP_OK)
+		if($response->code !== HTTP::STATUS_OK)
 		{
 			throw new \UnexpectedValueException(
 				'Unexpected HTTP response: '

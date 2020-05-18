@@ -38,7 +38,6 @@ apt-get remove -y software-properties-common \
 		gnupg            \
 		lsb-release      \
 		perl             \
-		php5.6           \
 		python           \
 		wget;            \
 	php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \

@@ -12,7 +12,6 @@ test:
 	PHP_VERSION=${PHP_VERSION} \
 	docker-compose -f test/docker-compose.yml run -T \
 		php /app/vendor/bin/phpunit \
-			--testdox test \
 			--whitelist=source/ \
 			--coverage-clover=/app/coverage.xml \
 			test/
@@ -21,8 +20,10 @@ start:
 	PHP_VERSION=${PHP_VERSION} \
 	docker-compose -f test/docker-compose.yml up -d
 
+SECONDS?=120
+
 wait:
-	sleep 120
+	sleep ${SECONDS}
 
 stop:
 	PHP_VERSION=${PHP_VERSION} \
