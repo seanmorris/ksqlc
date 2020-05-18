@@ -1,7 +1,7 @@
 <?php
 namespace SeanMorris\Ksqlc\Test;
 
-use PHPUnit\Framework\TestCase, \InvalidArgumentException, \SeanMorris\Ksqlc\Ksqlc, \SeanMorris\Ksqlc\Status, \SeanMorris\Ksqlc\Result, \SeanMorris\Ksqlc\Krest;
+use PHPUnit\Framework\TestCase, \InvalidArgumentException, \SeanMorris\Ksqlc\Ksqlc, \SeanMorris\Ksqlc\Status, \SeanMorris\Ksqlc\Result, \SeanMorris\Ksqlc\Krest, \stdClass;
 
 final class FunctionalTest extends TestCase
 {
@@ -20,12 +20,12 @@ final class FunctionalTest extends TestCase
 		$ksqlc = new Ksqlc('http://ksql-server:8088');
 		$krest = new Krest('http://krest-server:8082');
 
-		[$dropIfExists] = $ksqlc->run(
+		list($dropIfExists) = $ksqlc->run(
 			'DROP STREAM IF EXISTS `event_stream`'
 		);
 
-		[$streamCreated] = $ksqlc->run(<<<EOQ
-			CREATE STREAM `event_stream` (
+		list($streamCreated) = $ksqlc->run(
+			"CREATE STREAM `event_stream` (
 				`id` VARCHAR,
 				`body` VARCHAR,
 				`created` DOUBLE
@@ -34,8 +34,7 @@ final class FunctionalTest extends TestCase
 				KAFKA_TOPIC  = 'events',
 				KEY          = '`id`',
 				PARTITIONS   = 1
-			)
-			EOQ
+			)"
 		);
 
 		$this->assertEquals(
@@ -49,7 +48,7 @@ final class FunctionalTest extends TestCase
 		$this->assertObjectHasAttribute('warnings', $streamCreated);
 		$this->assertObjectHasAttribute('statementText', $streamCreated);
 
-		[$streams] = $ksqlc->run('SHOW STREAMS');
+		list($streams) = $ksqlc->run('SHOW STREAMS');
 
 		$this->assertInstanceOf(Result::CLASS, $streams);
 
@@ -65,31 +64,62 @@ final class FunctionalTest extends TestCase
 		$delay = rand(1,1000) / 1000;
 		$count = rand(1,10);
 
-		$query = sprintf('SELECT * FROM `event_stream` EMIT CHANGES LIMIT %d', $count);
+		$query = "SELECT *
+			FROM  `event_stream`
+			WHERE `body` = '%s'
+			EMIT CHANGES
+			LIMIT %d";
 
-		$streamingResults = $ksqlc->stream($query, 'earliest');
+		$streamingResults = $ksqlc->multiplex(
+			[sprintf($query, 'AAA', $count), 'earliest', TRUE]
+			, [sprintf($query, 'BBB', $count), 'earliest', TRUE]
+		);
 
 		for($i = 0; $i < $count; $i++)
 		{
-			$record = (object) [
+			$recordA = (object) [
 				'created' => microtime(true)
-				, 'body'  => 'Test event @ ' . date('r')
+				, 'body'  => 'AAA'
 				, 'id'    => uniqid()
 			];
 
-			$response = $krest->produce('events', $record);
+			$recordB = (object) [
+				'created' => microtime(true)
+				, 'body'  => 'BBB'
+				, 'id'    => uniqid()
+			];
+
+			$recordC = (object) [
+				'created' => microtime(true)
+				, 'body'  => 'CCC'
+				, 'id'    => uniqid()
+			];
+
+			$response = $krest->produce(
+				'events'
+				, $recordA
+				, $recordB
+				, $recordC
+			);
 		}
 
 		$got = 0;
 
 		foreach($streamingResults as $streamingResult)
 		{
+			if(!$streamingResult)
+			{
+				continue;
+			}
+
+			$this->assertInstanceOf(stdClass::CLASS, $streamingResult);
+
 			$got++;
 		}
 
-		$this->assertEquals($got, $count);
+		$this->assertEquals($got, 2 * $count);
 
-		[$streamDropped] = $ksqlc->run('DROP STREAM `event_stream`');
+		list($streamDropped) = $ksqlc->run('DROP STREAM `event_stream`');
 
 		$this->assertInstanceOf(Status::CLASS, $streamDropped);
 
@@ -102,8 +132,8 @@ final class FunctionalTest extends TestCase
 	{
 		$ksqlc = new Ksqlc('http://ksql-server:8088');
 
-		[$tableCreated] = $ksqlc->run(<<<EOQ
-			CREATE TABLE `event_table` (
+		list($tableCreated) = $ksqlc->run(
+			"CREATE TABLE `event_table` (
 				`id` VARCHAR,
 				`body` VARCHAR,
 				`created` DOUBLE
@@ -112,8 +142,7 @@ final class FunctionalTest extends TestCase
 				VALUE_FORMAT = 'json',
 				PARTITIONS   = 1,
 				KEY          = '`id`'
-			)
-			EOQ
+			)"
 		);
 
 		$this->assertInstanceOf(Status::CLASS, $tableCreated);
@@ -122,7 +151,7 @@ final class FunctionalTest extends TestCase
 		$this->assertObjectHasAttribute('warnings', $tableCreated);
 		$this->assertObjectHasAttribute('statementText', $tableCreated);
 
-		[$tables] = $ksqlc->run('SHOW TABLES');
+		list($tables) = $ksqlc->run('SHOW TABLES');
 
 		$this->assertInstanceOf(Result::CLASS, $tables);
 
@@ -130,19 +159,12 @@ final class FunctionalTest extends TestCase
 		$this->assertObjectHasAttribute('warnings', $tables);
 		$this->assertObjectHasAttribute('statementText', $tables);
 
-		var_dump($tables);
-
-		foreach($tables as $table)
-		{
-			var_dump($table);
-		}
-
-		[$describe, $extended] = $ksqlc->run(
+		list($describe, $extended) = $ksqlc->run(
 			'DESCRIBE `event_table`'
 			, 'DESCRIBE EXTENDED `event_table`'
 		);
 
-		[$tableDropped] = $ksqlc->run('DROP TABLE `event_table`');
+		list($tableDropped) = $ksqlc->run('DROP TABLE `event_table`');
 
 		$this->assertInstanceOf(Status::CLASS, $tableDropped);
 
@@ -155,7 +177,7 @@ final class FunctionalTest extends TestCase
 	{
 		$ksqlc = new Ksqlc('http://ksql-server:8088');
 
-		[$queries] = $ksqlc->run('SHOW QUERIES');
+		list($queries) = $ksqlc->run('SHOW QUERIES');
 
 		$this->assertInstanceOf(Result::CLASS, $queries);
 
@@ -168,8 +190,8 @@ final class FunctionalTest extends TestCase
 	{
 		$ksqlc = new Ksqlc('http://ksql-server:8088');
 
-		[$streamCreated, $streamDropped] = $ksqlc->run(<<<EOQ
-			CREATE STREAM `event_stream3` (
+		$creates = $ksqlc->run(
+			"CREATE STREAM `event_stream3` (
 				`id` VARCHAR,
 				`body` VARCHAR,
 				`created` DOUBLE
@@ -177,10 +199,11 @@ final class FunctionalTest extends TestCase
 				value_format = 'json',
 				kafka_topic  = 'events',
 				partitions   = 1
-			)
-			EOQ
-			, 'DROP STREAM `event_stream3`'
+			)"
+			, "DROP STREAM `event_stream3`"
 		);
+
+		list($streamCreated, $streamDropped) = $creates;
 
 		$this->assertInstanceOf(Status::CLASS, $streamCreated);
 

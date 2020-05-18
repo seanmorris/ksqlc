@@ -6,6 +6,7 @@ namespace SeanMorris\Ksqlc;
  */
 class Http
 {
+	const STATUS_OK = 200;
 	/**
 	 * Issue an HTTP GET request.
 	 *
@@ -72,7 +73,7 @@ class Http
 			{
 				$header = strtoupper($header);
 
-				[$httpVer, $code, $status] = sscanf(
+				list($httpVer, $code, $status) = sscanf(
 					$header, 'HTTP/%s %s %[ -~]'
 				);
 

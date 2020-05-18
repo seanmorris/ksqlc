@@ -1,13 +1,15 @@
 <?php
 namespace SeanMorris\Ksqlc;
 
+use \InvalidArgumentException, \UnexpectedValueException;
+
 /**
  * Provides an interface to KSQLDB from PHP.
  */
 class Ksqlc
 {
+	const HTTP_OK = 200;
 	protected $endpoint;
-	protected const HTTP_OK = 200;
 	protected static $Http;
 
 	use Injectable;
@@ -21,7 +23,7 @@ class Ksqlc
 	{
 		if(!filter_var($endpoint, FILTER_VALIDATE_URL))
 		{
-			throw new \InvalidArgumentException(
+			throw new InvalidArgumentException(
 				'Invalid endpoint.'
 			);
 		}
@@ -41,14 +43,14 @@ class Ksqlc
 
 		if(!$body)
 		{
-			throw new \UnexpectedValueException(
+			throw new UnexpectedValueException(
 				'Unexpected formatting on query response.'
 			);
 		}
 
 		if(!$body->KsqlServerInfo)
 		{
-			throw new \UnexpectedValueException(
+			throw new UnexpectedValueException(
 				'Unexpected data structure on query response.'
 			);
 		}
@@ -103,9 +105,10 @@ class Ksqlc
 
 		$rawResponse = stream_get_contents($response->stream);
 
+
 		if(!$response = json_decode($rawResponse))
 		{
-			throw new \UnexpectedValueException(
+			throw new UnexpectedValueException(
 				'Unexpected formatting on query response.'
 			);
 		}
@@ -158,7 +161,7 @@ class Ksqlc
 	 *
 	 * @return Generator The generator that can be iterated for results.
 	 */
-	public function stream($string, $offsetReset = 'latest')
+	public function stream($string, $offsetReset = 'latest', $async = FALSE)
 	{
 		$response = static::$Http::post(
 			$this->endpoint . '/query'
@@ -170,9 +173,9 @@ class Ksqlc
 			]
 		));
 
-		if($response->code !== static::HTTP_OK)
+		if($response->code !== HTTP::STATUS_OK)
 		{
-			throw new \UnexpectedValueException(
+			throw new UnexpectedValueException(
 				'Unexpected HTTP response: '
 					. PHP_EOL
 					. stream_get_contents($response->stream)
@@ -180,32 +183,42 @@ class Ksqlc
 			);
 		}
 
-		stream_set_chunk_size($response->stream, 1);
-		stream_set_read_buffer($response->stream, 0);
+		$buffer = NULL;
 
-		while($message = fgets($response->stream))
+		while(!feof($response->stream))
 		{
-			if(!$message = rtrim($message))
+			$buffer .= fgets($response->stream);
+
+			if(substr($buffer, -1) !== "\n")
 			{
 				continue;
 			}
 
-			$message = substr($message, 0, -1);
+			if(!$buffer = rtrim($buffer))
+			{
+				continue;
+			}
 
-			[$message] = sscanf($message, '[%[^\0]');
+			$buffer   = substr($buffer, 0, -1);
+			list($buffer) = sscanf($buffer, '[%[^\0]');
+
 			break;
 		}
 
-		if(!$record = json_decode($message))
+		stream_set_chunk_size($response->stream, 1);
+		stream_set_read_buffer($response->stream, 0);
+		stream_set_blocking($response->stream, !$async);
+
+		if(!$record = json_decode($buffer))
 		{
-			throw new \UnexpectedValueException(
+			throw new UnexpectedValueException(
 				'Unexpected formatting on first line of stream.'
 			);
 		}
 
 		if(!($record->header ?? NULL) || !($record->header->schema ?? NULL))
 		{
-			throw new \UnexpectedValueException(
+			throw new UnexpectedValueException(
 				'Unexpected data structure on first line of stream.'
 			);
 		}
@@ -215,28 +228,43 @@ class Ksqlc
 
 		foreach($keyDefs as $keyDef)
 		{
-			[$key, $type] = sscanf($keyDef, '`%[^\`]` %s');
+			list($key, $type) = sscanf($keyDef, '`%[^\`]` %s');
 
 			$keyTypes[ $key ] = $type;
 		}
 
-		$keys = array_keys($keyTypes);
+		$buffer = NULL;
+		$keys   = array_keys($keyTypes);
 
-		while($message = fgets($response->stream))
+		while(!feof($response->stream))
 		{
-			if(!$message = rtrim($message))
+			$buffer .= fgets($response->stream);
+
+			if(substr($buffer, -1) !== "\n")
 			{
 				continue;
 			}
 
-			$message = substr($message, 0, -1);
-
-			if(!$record = json_decode($message))
+			if($buffer === NULL)
 			{
-				throw new \UnexpectedValueException(
+				continue;
+			}
+
+			if(!$buffer = rtrim($buffer))
+			{
+				continue;
+			}
+
+			$buffer = substr($buffer, 0, -1);
+
+			if(!$record = json_decode($buffer))
+			{
+				throw new UnexpectedValueException(
 					'Unexpected formatting in stream body.'
 				);
 			}
+
+			$buffer = '';
 
 			if($record->finalMessage ?? 0)
 			{
@@ -245,7 +273,7 @@ class Ksqlc
 
 			if(!($record->row ?? 0) || !($record->row->columns ?? 0))
 			{
-				throw new \UnexpectedValueException(
+				throw new UnexpectedValueException(
 					'Unexpected data structure in stream body.'
 				);
 			}
@@ -258,6 +286,25 @@ class Ksqlc
 		}
 
 		fclose($response->stream);
+	}
+
+	public function multiplex(...$queries)
+	{
+		$outerIterator = new StreamIterator();
+
+		foreach($queries as $query)
+		{
+			if(!is_array($query))
+			{
+				$query = [$query];
+			}
+
+			$resultStream = $this->stream(...$query);
+
+			$outerIterator->attachIterator($resultStream);
+		}
+
+		yield from $outerIterator;
 	}
 }
 
