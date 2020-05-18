@@ -3,12 +3,14 @@ version: '2.4'
 services:
 
   php:
-    image: seanmorris/ksqlc-test
+    image: seanmorris/ksqlc-test:${tag:-latest}-${PHP_VERSION}
     restart: on-failure
     volumes: ['../:/app']
     build:
       context: ../
       dockerfile: test/Dockerfile
+      args:
+        PHP_VERSION: ${PHP_VERSION}
     depends_on:
       - ksql-server
       - krest-server

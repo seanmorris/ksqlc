@@ -1,6 +1,8 @@
 FROM debian:buster-20191118-slim as base
 MAINTAINER Sean Morris <ksqlc@seanmorr.is>
 
+ARG PHP_VERSION
+
 SHELL ["/bin/bash", "-euxc"]
 
 RUN apt-get update;      \
@@ -17,17 +19,17 @@ RUN apt-get update;      \
 	apt-get install -y --no-install-recommends \
 		composer         \
 		libssl1.1        \
-		php7.3           \
-		php7.3-cli       \
-		php7.3-common    \
-		php7.3-dom       \
-		php7.3-json      \
-		php7.3-mbstring  \
-		php7.3-opcache   \
-		php7.3-pdo-mysql \
-		php7.3-readline  \
-		php7.3-xml       \
-		php7.3-yaml;     \
+		php${PHP_VERSION}           \
+		php${PHP_VERSION}-cli       \
+		php${PHP_VERSION}-common    \
+		php${PHP_VERSION}-dom       \
+		php${PHP_VERSION}-json      \
+		php${PHP_VERSION}-mbstring  \
+		php${PHP_VERSION}-opcache   \
+		php${PHP_VERSION}-pdo-mysql \
+		php${PHP_VERSION}-readline  \
+		php${PHP_VERSION}-xml       \
+		php${PHP_VERSION}-yaml;     \
 apt-get remove -y software-properties-common \
 		apache2-bin      \
 		apt-transport-https \

@@ -1,23 +1,31 @@
 .PHONY: test
 
+PHP_VERSION?=7.3
+
+build-test:
+	PHP_VERSION=${PHP_VERSION} \
+	docker-compose -f test/docker-compose.yml build
+
 test:
+	PHP_VERSION=${PHP_VERSION} \
 	docker-compose -f test/docker-compose.yml run php \
 		/app/vendor/bin/phpunit --testdox test/
 
-build-test:
-	docker-compose -f test/docker-compose.yml build
-
 start:
+	PHP_VERSION=${PHP_VERSION} \
 	docker-compose -f test/docker-compose.yml up -d
 
 wait:
 	sleep 60
 
 stop:
+	PHP_VERSION=${PHP_VERSION} \
 	docker-compose -f test/docker-compose.yml down
 
 push-images:
+	PHP_VERSION=${PHP_VERSION} \
 	docker-compose -f test/docker-compose.yml push
 
 pull-images:
+	PHP_VERSION=${PHP_VERSION} \
 	docker-compose -f test/docker-compose.yml pull
