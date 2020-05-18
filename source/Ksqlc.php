@@ -1,6 +1,8 @@
 <?php
 namespace SeanMorris\Ksqlc;
 
+use \InvalidArgumentException, \UnexpectedValueException;
+
 /**
  * Provides an interface to KSQLDB from PHP.
  */
@@ -21,7 +23,7 @@ class Ksqlc
 	{
 		if(!filter_var($endpoint, FILTER_VALIDATE_URL))
 		{
-			throw new \InvalidArgumentException(
+			throw new InvalidArgumentException(
 				'Invalid endpoint.'
 			);
 		}
@@ -41,14 +43,14 @@ class Ksqlc
 
 		if(!$body)
 		{
-			throw new \UnexpectedValueException(
+			throw new UnexpectedValueException(
 				'Unexpected formatting on query response.'
 			);
 		}
 
 		if(!$body->KsqlServerInfo)
 		{
-			throw new \UnexpectedValueException(
+			throw new UnexpectedValueException(
 				'Unexpected data structure on query response.'
 			);
 		}
@@ -106,7 +108,7 @@ class Ksqlc
 
 		if(!$response = json_decode($rawResponse))
 		{
-			throw new \UnexpectedValueException(
+			throw new UnexpectedValueException(
 				'Unexpected formatting on query response.'
 			);
 		}
@@ -173,7 +175,7 @@ class Ksqlc
 
 		if($response->code !== HTTP::STATUS_OK)
 		{
-			throw new \UnexpectedValueException(
+			throw new UnexpectedValueException(
 				'Unexpected HTTP response: '
 					. PHP_EOL
 					. stream_get_contents($response->stream)
@@ -209,14 +211,14 @@ class Ksqlc
 
 		if(!$record = json_decode($buffer))
 		{
-			throw new \UnexpectedValueException(
+			throw new UnexpectedValueException(
 				'Unexpected formatting on first line of stream.'
 			);
 		}
 
 		if(!($record->header ?? NULL) || !($record->header->schema ?? NULL))
 		{
-			throw new \UnexpectedValueException(
+			throw new UnexpectedValueException(
 				'Unexpected data structure on first line of stream.'
 			);
 		}
@@ -257,7 +259,7 @@ class Ksqlc
 
 			if(!$record = json_decode($buffer))
 			{
-				throw new \UnexpectedValueException(
+				throw new UnexpectedValueException(
 					'Unexpected formatting in stream body.'
 				);
 			}
@@ -271,7 +273,7 @@ class Ksqlc
 
 			if(!($record->row ?? 0) || !($record->row->columns ?? 0))
 			{
-				throw new \UnexpectedValueException(
+				throw new UnexpectedValueException(
 					'Unexpected data structure in stream body.'
 				);
 			}
