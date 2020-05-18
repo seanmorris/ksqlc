@@ -47,9 +47,7 @@ $ksqlc = new Ksqlc('http://your-ksql-server:8088/');
 
 KSQLDB will push query results to you asynchronously when you're using `Ksqlc::stream()`.
 
-Ksqlc will return streaming queries as generators. These can be iterated with `foreach`.
-
-Queries will return results until a limit is reached or the programmer breaks the loop  and destroys the reference.
+Ksqlc will return streaming queries as generators. These can be iterated with `foreach`. Results will stream in until a limit is reached or the programmer breaks the loop  and destroys the reference.
 
 ```php
 <?php
@@ -66,42 +64,68 @@ foreach($stream as $row)
 	}
 }
 
-unset($result);
+unset($stream);
 
 ```
 
-### Limits
-
-Queries with limits will terminate when the given number of rows have been iterated.
-
-```php
-<?php
-
-$result = $ksqlc->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES LIMIT 20');
-
-foreach($result as $row) { /* Stream processing... */ }
-
-```
 ### Ksqlc::multiplex() - Stream Mutliple Queries
+
+You can loop over multiple queries at once with `Ksqlc::multiplex()`. Each parameter to this method represents either a string query or a list of parameters to send to `Ksqlc::stream()`.
 
 ```php
 <?php
 
 $streamingResults = $ksqlc->multiplex(
-	[sprintf($query, 'AAA', $count), 'earliest']
-	, [sprintf($query, 'BBB', $count), 'earliest']
+	[sprintf($query, 'AAA', $count), 'earliest'],
+	[sprintf($query, 'BBB', $count), 'earliest']
 );
+
 ```
-### Offset Reset
+
+#### Limits
+
+Queries with limits will terminate when the given number of rows have been iterated.
+
+Multiplexed queries will terminate when all limits have been reached.
+
+```php
+<?php
+
+$stream = $ksqlc->stream('SELECT * FROM EVENT_STREAM EMIT CHANGES LIMIT 20');
+
+foreach($stream as $row) { /* Stream processing... */ }
+
+```
+#### Offset Reset
 
 Streaming queries will **ONLY** select new records by default. Use the second param to `Ksqlc::stream()` to process all records from the beginning of time.
 
 ```php
 <?php
 
-$result = $ksqlc->stream($queryString, 'earliest'); ## process everything
+$stream = $ksqlc->stream($queryString, 'earliest'); ## process everything
 
-$result = $ksqlc->stream($queryString, 'latest');   ## process new records
+$stream = $ksqlc->stream($queryString, 'latest');   ## process new records
+
+```
+
+#### Full asyncronicity
+
+Passing `TRUE` to the third parameter of `Ksqlc::stream()` allows you to turn on full syncronous mode.
+
+In this example, the foreach loop will spin indefinitely until the query returns 20 records and completes. If there is no data to process, a stream of `NULL`'s will be supplied. This allows you to tend to other, unrelated streams in the same loop, or even break the loop and resume processing later on.
+
+```php
+<?php
+
+$query  = 'SELECT * FROM EVENT_STREAM EMIT CHANGES LIMIT 20';
+$stream = $ksqlc->stream($queryString, 'latest', TRUE);
+
+foreach($stream as $row) {
+
+	var_dump($row);
+
+}
 
 ```
 
@@ -146,6 +170,16 @@ You can also use list destructuring to get the results of multiple queries all a
 <?php
 
 [$streams, $tables] = $ksqlc->run('SHOW STREAMS', 'SHOW TABLES');
+
+foreach($streams as $streams)
+{
+	// ...
+}
+
+foreach($tables as $table)
+{
+	// ...
+}
 
 ```
 
