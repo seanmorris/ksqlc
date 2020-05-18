@@ -1,3 +1,5 @@
+-include .env
+
 .PHONY: test
 
 PHP_VERSION?=7.3
@@ -9,7 +11,12 @@ build-test:
 test:
 	PHP_VERSION=${PHP_VERSION} \
 	docker-compose -f test/docker-compose.yml run php \
-		/app/vendor/bin/phpunit --testdox test/
+		/app/vendor/bin/phpunit \
+			--testdox test \
+			--whitelist=test/ \
+			--coverage-clover=/app/coverage.xml \
+			test/
+
 
 start:
 	PHP_VERSION=${PHP_VERSION} \
@@ -29,3 +36,6 @@ push-images:
 pull-images:
 	PHP_VERSION=${PHP_VERSION} \
 	docker-compose -f test/docker-compose.yml pull
+
+push-coverage:
+	wget -qO- https://codecov.io/bash | CODECOV_TOKEN=${CODECOV_TOKEN} bash

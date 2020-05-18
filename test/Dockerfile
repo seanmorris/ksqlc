@@ -28,6 +28,7 @@ RUN apt-get update;      \
 		php${PHP_VERSION}-opcache   \
 		php${PHP_VERSION}-pdo-mysql \
 		php${PHP_VERSION}-readline  \
+		php${PHP_VERSION}-xdebug    \
 		php${PHP_VERSION}-xml       \
 		php${PHP_VERSION}-yaml;     \
 apt-get remove -y software-properties-common \
@@ -52,5 +53,7 @@ apt-get remove -y software-properties-common \
 	mkdir /app;
 
 WORKDIR /app
+
+COPY ./test/30-xdebug-cli.ini /etc/php/${PHP_VERSION}/cli/conf.d/30-xdebug-cli.ini
 
 ENTRYPOINT ["php"]
