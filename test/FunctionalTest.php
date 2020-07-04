@@ -26,20 +26,19 @@ final class FunctionalTest extends TestCase
 
 		list($streamCreated) = $ksqlc->run(
 			"CREATE STREAM `event_stream` (
-				`id` VARCHAR,
+				`id` VARCHAR KEY,
 				`body` VARCHAR,
 				`created` DOUBLE
 			) WITH (
 				VALUE_FORMAT = 'JSON',
 				KAFKA_TOPIC  = 'events',
-				KEY          = '`id`',
 				PARTITIONS   = 1
 			)"
 		);
 
 		$this->assertEquals(
-			$streamCreated->status
-			, 'SUCCESS'
+			'SUCCESS'
+			, $streamCreated->status
 		);
 
 		$this->assertInstanceOf(Status::CLASS, $streamCreated);
@@ -134,14 +133,13 @@ final class FunctionalTest extends TestCase
 
 		list($tableCreated) = $ksqlc->run(
 			"CREATE TABLE `event_table` (
-				`id` VARCHAR,
+				`id` VARCHAR PRIMARY KEY,
 				`body` VARCHAR,
 				`created` DOUBLE
 			) WITH (
 				KAFKA_TOPIC  = 'event_table',
 				VALUE_FORMAT = 'json',
-				PARTITIONS   = 1,
-				KEY          = '`id`'
+				PARTITIONS   = 1
 			)"
 		);
 
@@ -159,10 +157,12 @@ final class FunctionalTest extends TestCase
 		$this->assertObjectHasAttribute('warnings', $tables);
 		$this->assertObjectHasAttribute('statementText', $tables);
 
-		list($describe, $extended) = $ksqlc->run(
+		$run = $ksqlc->run(
 			'DESCRIBE `event_table`'
 			, 'DESCRIBE EXTENDED `event_table`'
 		);
+
+		list($describe, $extended) = $run;
 
 		list($tableDropped) = $ksqlc->run('DROP TABLE `event_table`');
 
