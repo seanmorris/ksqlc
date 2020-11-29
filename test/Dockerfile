@@ -23,7 +23,6 @@ RUN apt-get update;      \
 		php${PHP_VERSION}-cli       \
 		php${PHP_VERSION}-common    \
 		php${PHP_VERSION}-dom       \
-		php${PHP_VERSION}-json      \
 		php${PHP_VERSION}-mbstring  \
 		php${PHP_VERSION}-opcache   \
 		php${PHP_VERSION}-pdo-mysql \
@@ -31,7 +30,9 @@ RUN apt-get update;      \
 		php${PHP_VERSION}-xdebug    \
 		php${PHP_VERSION}-xml       \
 		php${PHP_VERSION}-yaml;     \
-apt-get remove -y software-properties-common \
+	[[ $(${PHP_VERSION} | cut -c1) = '7' ]] && apt-get install -y --no-install-recommends \
+		php${PHP_VERSION}-json      \
+	apt-get remove -y software-properties-common \
 		apache2-bin      \
 		apt-transport-https \
 		ca-certificates  \
