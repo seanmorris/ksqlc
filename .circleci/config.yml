@@ -91,6 +91,6 @@ jobs:
       - run: curl -X PURGE https://camo.githubusercontent.com/576384275f26b9d24df1b7a34480e1aa47a7bf83/68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d375f343f6c6162656c3d706870253230372e34
       - checkout
       - install-composer
-      - run: composer require phpunit/phpunit "^9"
+      - run: composer require-dev phpunit/phpunit "^9" --ignore-platform-reqs
       - run: make PHP_VERSION=8.0 build-test start wait test push-coverage stop
       - run: curl -X PURGE https://camo.githubusercontent.com/576384275f26b9d24df1b7a34480e1aa47a7bf83/68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d375f343f6c6162656c3d706870253230372e34
