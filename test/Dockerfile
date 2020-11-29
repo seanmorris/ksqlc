@@ -28,10 +28,10 @@ RUN apt-get update;      \
 		php${PHP_VERSION}-pdo-mysql \
 		php${PHP_VERSION}-readline  \
 		php${PHP_VERSION}-xdebug    \
-		php${PHP_VERSION}-xml       \
-		php${PHP_VERSION}-yaml;     \
+		php${PHP_VERSION}-xml;       \
 	[[ $(${PHP_VERSION} | cut -c1) = '7' ]] && apt-get install -y --no-install-recommends \
 		php${PHP_VERSION}-json      \
+		php${PHP_VERSION}-yaml;     \
 	apt-get remove -y software-properties-common \
 		apache2-bin      \
 		apt-transport-https \
