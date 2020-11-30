@@ -39,49 +39,59 @@ jobs:
     machine:
       image: ubuntu-1604:201903-01
     steps:
+      - run: curl -X PURGE https://res.cloudinary.com/seanmorr-is/image/fetch/https://seanmorris-badger.herokuapp.com/ksqlc/test-7_1%3Flabel=php+7.0
       - run: curl -X PURGE https://camo.githubusercontent.com/fbdf58eb67f5016326727f01afbe86eaa42441ba05442f612b187ec3b9a83f06/68747470733a2f2f7265732e636c6f7564696e6172792e636f6d2f7365616e6d6f72722d69732f696d6167652f66657463682f68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d375f302533466c6162656c3d7068702b372e30
       - checkout
       - install-composer
       - run: make PHP_VERSION=7.0 build-test start wait test push-coverage stop
+      - run: curl -X PURGE https://res.cloudinary.com/seanmorr-is/image/fetch/https://seanmorris-badger.herokuapp.com/ksqlc/test-7_1%3Flabel=php+7.0
       - run: curl -X PURGE https://camo.githubusercontent.com/fbdf58eb67f5016326727f01afbe86eaa42441ba05442f612b187ec3b9a83f06/68747470733a2f2f7265732e636c6f7564696e6172792e636f6d2f7365616e6d6f72722d69732f696d6167652f66657463682f68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d375f302533466c6162656c3d7068702b372e30
 
   test-7_1:
     machine:
       image: ubuntu-1604:201903-01
     steps:
+      - run: curl -X PURGE https://res.cloudinary.com/seanmorr-is/image/fetch/https://seanmorris-badger.herokuapp.com/ksqlc/test-7_1%3Flabel=php+7.1
       - run: curl -X PURGE https://camo.githubusercontent.com/00285d75fb880a61c3136a6bf8d6628f8c2b290a3b0b1bd68e9c415e5717d86a/68747470733a2f2f7265732e636c6f7564696e6172792e636f6d2f7365616e6d6f72722d69732f696d6167652f66657463682f68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d375f312533466c6162656c3d7068702b372e31
       - checkout
       - install-composer
       - run: make PHP_VERSION=7.1 build-test start wait test push-coverage stop
+      - run: curl -X PURGE https://res.cloudinary.com/seanmorr-is/image/fetch/https://seanmorris-badger.herokuapp.com/ksqlc/test-7_1%3Flabel=php+7.1
       - run: curl -X PURGE https://camo.githubusercontent.com/00285d75fb880a61c3136a6bf8d6628f8c2b290a3b0b1bd68e9c415e5717d86a/68747470733a2f2f7265732e636c6f7564696e6172792e636f6d2f7365616e6d6f72722d69732f696d6167652f66657463682f68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d375f312533466c6162656c3d7068702b372e31
 
   test-7_2:
     machine:
       image: ubuntu-1604:201903-01
     steps:
+      - run: curl -X PURGE https://res.cloudinary.com/seanmorr-is/image/fetch/https://seanmorris-badger.herokuapp.com/ksqlc/test-7_2%3Flabel=php+7.2
       - run: curl -X PURGE https://camo.githubusercontent.com/a285e678b83bf1b9e984943ab7413407027767090b80ac09e1fee2372e9e5302/68747470733a2f2f7265732e636c6f7564696e6172792e636f6d2f7365616e6d6f72722d69732f696d6167652f66657463682f68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d375f322533466c6162656c3d7068702b372e32
       - checkout
       - install-composer
       - run: make PHP_VERSION=7.2 build-test start wait test push-coverage stop
+      - run: curl -X PURGE https://res.cloudinary.com/seanmorr-is/image/fetch/https://seanmorris-badger.herokuapp.com/ksqlc/test-7_2%3Flabel=php+7.2
       - run: curl -X PURGE https://camo.githubusercontent.com/a285e678b83bf1b9e984943ab7413407027767090b80ac09e1fee2372e9e5302/68747470733a2f2f7265732e636c6f7564696e6172792e636f6d2f7365616e6d6f72722d69732f696d6167652f66657463682f68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d375f322533466c6162656c3d7068702b372e32
 
   test-7_3:
     machine:
       image: ubuntu-1604:201903-01
     steps:
+      - run: curl -X PURGE https://res.cloudinary.com/seanmorr-is/image/fetch/https://seanmorris-badger.herokuapp.com/ksqlc/test-7_3%3Flabel=php+7.3
       - run: curl -X PURGE https://camo.githubusercontent.com/9630c400ea9dc362e9574e7be54ded68045c248f804df41b7d30937e88e409b8/68747470733a2f2f7265732e636c6f7564696e6172792e636f6d2f7365616e6d6f72722d69732f696d6167652f66657463682f68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d375f332533466c6162656c3d7068702b372e33
       - checkout
       - install-composer
       - run: make PHP_VERSION=7.3 build-test start wait test push-coverage stop
+      - run: curl -X PURCE https://res.cloudinary.com/seanmorr-is/image/fetch/https://seanmorris-badger.herokuapp.com/ksqlc/test-7_3%3Flabel=php+7.3
       - run: curl -X PURGE https://camo.githubusercontent.com/9630c400ea9dc362e9574e7be54ded68045c248f804df41b7d30937e88e409b8/68747470733a2f2f7265732e636c6f7564696e6172792e636f6d2f7365616e6d6f72722d69732f696d6167652f66657463682f68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d375f332533466c6162656c3d7068702b372e33
 
   test-7_4:
     machine:
       image: ubuntu-1604:201903-01
     steps:
+      - run: curl -X PURGE https://res.cloudinary.com/seanmorr-is/image/fetch/https://seanmorris-badger.herokuapp.com/ksqlc/test-7_4%3Flabel=php+7.4
       - run: curl -X PURGE https://camo.githubusercontent.com/e3cf4d9ef2cc8361ff556771681aa57e2f798cc70e7ebd13483e43a981d6fab3/68747470733a2f2f7265732e636c6f7564696e6172792e636f6d2f7365616e6d6f72722d69732f696d6167652f66657463682f68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d375f342533466c6162656c3d7068702b372e34
       - checkout
       - install-composer
+      - run: curl -X PURCE https://res.cloudinary.com/seanmorr-is/image/fetch/https://seanmorris-badger.herokuapp.com/ksqlc/test-7_4%3Flabel=php+7.4
       - run: make PHP_VERSION=7.4 build-test start wait test push-coverage stop
       - run: curl -X PURGE https://camo.githubusercontent.com/e3cf4d9ef2cc8361ff556771681aa57e2f798cc70e7ebd13483e43a981d6fab3/68747470733a2f2f7265732e636c6f7564696e6172792e636f6d2f7365616e6d6f72722d69732f696d6167652f66657463682f68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d375f342533466c6162656c3d7068702b372e34
 
@@ -89,9 +99,11 @@ jobs:
     machine:
       image: ubuntu-1604:201903-01
     steps:
+      - run: curl -X PURGE https://res.cloudinary.com/seanmorr-is/image/fetch/https://seanmorris-badger.herokuapp.com/ksqlc/test-8_0%3Flabel=php+8.0
       - run: curl -X PURGE https://camo.githubusercontent.com/af3f6518b1f18a8128d69b6c7be662e6b94193d7d7a5e7adbf73519a960f39ca/68747470733a2f2f7265732e636c6f7564696e6172792e636f6d2f7365616e6d6f72722d69732f696d6167652f66657463682f68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d385f302533466c6162656c3d7068702b382e30
       - checkout
       - install-composer
       - run: composer require --dev phpunit/phpunit:^9 --ignore-platform-reqs --with-all-dependencies
+      - run: curl -X PURGE https://res.cloudinary.com/seanmorr-is/image/fetch/https://seanmorris-badger.herokuapp.com/ksqlc/test-8_0%3Flabel=php+8.0
       - run: make PHP_VERSION=8.0 build-test start wait test push-coverage stop
       - run: curl -X PURGE https://camo.githubusercontent.com/af3f6518b1f18a8128d69b6c7be662e6b94193d7d7a5e7adbf73519a960f39ca/68747470733a2f2f7265732e636c6f7564696e6172792e636f6d2f7365616e6d6f72722d69732f696d6167652f66657463682f68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d385f302533466c6162656c3d7068702b382e30
