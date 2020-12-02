@@ -14,7 +14,7 @@ Ksqlc is free for distribution, modification, and use under the [Apache-2.0 lice
 
 
 ### Supports PHP 7.0-7.4 & PHP 8.0!
--
+
 ![php 7.0 tests](https://seanmorris-badger.herokuapp.com/ksqlc/test-7_0?label=php+7.0&timed=1)
 ![php 7.1 tests](https://seanmorris-badger.herokuapp.com/ksqlc/test-7_1?label=php+7.1&timed=1)
 ![php 7.2 tests](https://seanmorris-badger.herokuapp.com/ksqlc/test-7_2?label=php+7.2&timed=1)
