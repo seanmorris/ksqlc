@@ -199,11 +199,11 @@ class Ksqlc
 				continue;
 			}
 
-			$buffer   = substr($buffer, 0, -1);
-			list($buffer) = sscanf($buffer, '[%[^\0]');
-
 			break;
 		}
+
+		$buffer = substr($buffer, 0, -1);
+		list($buffer) = sscanf($buffer, '[%[^\0]');
 
 		stream_set_chunk_size($response->stream, 1);
 		stream_set_read_buffer($response->stream, 0);
