@@ -15,9 +15,9 @@ commands:
 workflows:
   version: 2
 
-  # test-7_0:
-  #   jobs:
-  #     - test-7_0
+  test-7_0:
+    jobs:
+      - test-7_0
 
   test-7_1:
     jobs:
@@ -38,10 +38,6 @@ workflows:
   test-8_0:
     jobs:
       - test-8_0
-
-  test-8_1:
-    jobs:
-      - test-8_1
 
 jobs:
   test-7_0:
@@ -104,12 +100,3 @@ jobs:
       - run: composer require --dev phpunit/phpunit:^9 --ignore-platform-reqs --with-all-dependencies
       - run: make PHP_VERSION=8.0 build-test start wait test push-coverage stop
       - run: curl -X PURGE https://camo.githubusercontent.com/f968fc3032c06a32d78e65c0aaefd8166ba8213b344905c742ded9dfd0200903/68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d385f303f6c6162656c3d7068702b382e30
-
-  test-8_1:
-    machine:
-      image: ubuntu-1604:201903-01
-    steps:
-      - checkout
-      - install-composer
-      - run: composer require --dev phpunit/phpunit:^9 --ignore-platform-reqs --with-all-dependencies
-      - run: make PHP_VERSION=8.1 build-test start wait test push-coverage stop
