@@ -199,11 +199,13 @@ class Ksqlc
 				continue;
 			}
 
+
 			break;
 		}
 
+		list($buffer) = sscanf($buffer, "[%[^[]]");
+
 		$buffer = substr($buffer, 0, -1);
-		list($buffer) = sscanf($buffer, '[%[^\0]');
 
 		stream_set_chunk_size($response->stream, 1);
 		stream_set_read_buffer($response->stream, 0);
@@ -212,9 +214,7 @@ class Ksqlc
 		if(!$record = json_decode($buffer))
 		{
 			throw new UnexpectedValueException(
-				'Unexpected formatting on first line of stream: '
-					. PHP_EOL
-					. $buffer
+				'Unexpected formatting on first line of stream.'
 			);
 		}
 
