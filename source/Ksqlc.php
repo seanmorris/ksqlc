@@ -212,7 +212,9 @@ class Ksqlc
 		if(!$record = json_decode($buffer))
 		{
 			throw new UnexpectedValueException(
-				'Unexpected formatting on first line of stream.'
+				'Unexpected formatting on first line of stream: '
+					. PHP_EOL
+					. $buffer
 			);
 		}
 

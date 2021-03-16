@@ -15,9 +15,9 @@ commands:
 workflows:
   version: 2
 
-  test-7_0:
-    jobs:
-      - test-7_0
+  # test-7_0:
+  #   jobs:
+  #     - test-7_0
 
   test-7_1:
     jobs:
