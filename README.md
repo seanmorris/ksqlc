@@ -119,7 +119,7 @@ $stream = $ksqlc->stream($queryString, 'latest');   ## process new records
 
 #### Full asyncronicity
 
-Passing `TRUE` to the third parameter of `Ksqlc::stream()` allows you to turn on full syncronous mode.
+Passing `TRUE` to the third parameter of `Ksqlc::stream()` allows you to turn on full asyncronous mode.
 
 In this example, the foreach loop will spin indefinitely until the query returns 20 records and completes. If there is no data to process, a stream of `NULL`'s will be supplied. This allows you to tend to other, unrelated streams in the same loop, or even break the loop and resume processing later on.
 
