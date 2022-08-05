@@ -1,6 +1,7 @@
 <?php
 namespace SeanMorris\Ksqlc;
 
+use Generator;
 use \InvalidArgumentException, \UnexpectedValueException;
 
 /**
@@ -8,7 +9,6 @@ use \InvalidArgumentException, \UnexpectedValueException;
  */
 class Ksqlc
 {
-	const HTTP_OK = 200;
 	protected $endpoint;
 	protected static $Http;
 
@@ -19,7 +19,7 @@ class Ksqlc
 	 *
 	 * @param string $endpoint The URL to KSQLDB's REST endpoint.
 	 */
-	public function __construct($endpoint)
+	public function __construct(string $endpoint)
 	{
 		if(!filter_var($endpoint, FILTER_VALIDATE_URL))
 		{
@@ -56,16 +56,6 @@ class Ksqlc
 		}
 
 		return $body->KsqlServerInfo;
-	}
-
-	/**
-	 * Escape a string value for use in a KSQL query.
-	 *
-	 * @param string $endpoint The URL to KSQLDB's REST endpoint.
-	 */
-	public function escape($identifier)
-	{
-		return str_replace("'", "''", $identifier);
 	}
 
 	/**
@@ -132,7 +122,7 @@ class Ksqlc
 				{
 					$rr = new Source;
 				}
-				else if($typeSuffix == 'status' || $typeSuffix == '_error')
+				else if($typeSuffix === 'status' || $typeSuffix === '_error')
 				{
 					$rr = new Status;
 				}
@@ -156,19 +146,21 @@ class Ksqlc
 	 * Use this method to issue a select query
 	 * and stream the results back to PHP.
 	 *
-	 * @param string $endpoint The KSQL statement to execute.
+	 * @param string $string The KSQL statement to execute
 	 * @param string $offsetReset earliest/latest.
-	 *
+	 * @param bool $async true/false
+	 * @param bool $tableScanEnabled true/false
 	 * @return Generator The generator that can be iterated for results.
 	 */
-	public function stream($string, $offsetReset = 'latest', $async = FALSE)
+	public function stream(string $string, string $offsetReset = 'latest', bool $async = FALSE, bool $tableScanEnabled = FALSE): Generator
 	{
 		$response = static::$Http::post(
 			$this->endpoint . '/query'
 			, json_encode([
 				'ksql' => $string . ';'
 				, 'streamsProperties' => [
-					'ksql.streams.auto.offset.reset' => $offsetReset
+					'ksql.streams.auto.offset.reset' => $offsetReset,
+					'ksql.query.pull.table.scan.enabled' => $tableScanEnabled
 				]
 			]
 		));
