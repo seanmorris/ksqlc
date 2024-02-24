@@ -56,7 +56,8 @@ class Http
 	public static function openRequest($method, $url, $content = NULL)
 	{
 		$context = stream_context_create(['http' => [
-			'ignore_errors' => true
+			'protocol_version' => 2.0
+			, 'ignore_errors' => true
 			, 'content'     => $content
 			, 'method'      => $method
 			, 'header'      => [
@@ -95,7 +96,7 @@ class Http
 			return $carry;
 
 		}, (object) [
-			'http'     => 1
+			'http'     => 0
 			, 'code'   => 0
 			, 'time'   => microtime(true)
 			, 'status' => '0 ERROR'
