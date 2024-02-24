@@ -5,8 +5,8 @@ ARG PHP_VERSION
 
 SHELL ["/bin/bash", "-euxc"]
 
-RUN apt-get update;      \
-	apt-get install -y --no-install-recommends software-properties-common \
+RUN apt update;      \
+	apt install -y --no-install-recommends software-properties-common \
 		ca-certificates  \
 		lsb-release      \
 		gnupg            \
@@ -15,9 +15,9 @@ RUN apt-get update;      \
 		https://packages.sury.org/php/apt.gpg;         \
 	sh -c "echo 'deb https://packages.sury.org/php/ $(lsb_release -sc) main' \
 		 | tee /etc/apt/sources.list.d/sury-php.list"; \
-	apt-get update;      \
-	apt-get install -y --no-install-recommends \
-		libssl1.1        \
+	apt update;      \
+	apt install -y --no-install-recommends \
+		libssl1.1 \
 		php${PHP_VERSION}           \
 		php${PHP_VERSION}-cli       \
 		php${PHP_VERSION}-common    \
@@ -31,7 +31,7 @@ RUN apt-get update;      \
 	[[ $(${PHP_VERSION} | cut -c1) = '7' ]] && apt-get install -y --no-install-recommends \
 		php${PHP_VERSION}-json      \
 		php${PHP_VERSION}-yaml;     \
-	apt-get remove -y software-properties-common \
+	apt remove -y software-properties-common \
 		apache2-bin         \
 		apt-transport-https \
 		ca-certificates     \
@@ -40,9 +40,9 @@ RUN apt-get update;      \
 		perl                \
 		python              \
 		wget;               \
-	apt-get purge -y --auto-remove; \
-	apt-get autoremove -y;          \
-	apt-get clean;                  \
+	apt purge -y --auto-remove; \
+	apt autoremove -y;          \
+	apt clean;                  \
 	rm -rf /var/lib/apt/lists/*     \
 	mkdir /app;
 
