@@ -15,9 +15,10 @@ RUN apt update;      \
 		https://packages.sury.org/php/apt.gpg;         \
 	sh -c "echo 'deb https://packages.sury.org/php/ $(lsb_release -sc) main' \
 		 | tee /etc/apt/sources.list.d/sury-php.list"; \
+	wget https://snapshot.debian.org/archive/debian/20190531T031011Z/pool/main/o/openssl/libssl1.1_1.1.1c-1_amd64.deb; \
+	dpkg -i libssl1.1_1.1.1c-1_amd64.deb; \
 	apt update;      \
 	apt install -y --no-install-recommends \
-		libssl1.1 \
 		php${PHP_VERSION}           \
 		php${PHP_VERSION}-cli       \
 		php${PHP_VERSION}-common    \
