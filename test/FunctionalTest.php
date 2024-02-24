@@ -162,7 +162,7 @@ final class FunctionalTest extends TestCase
 			, 'DESCRIBE EXTENDED `event_table`'
 		);
 
-		list($describe, $extended) = $run;
+		list($describe, $extended) = $run + [1 => null];
 
 		list($tableDropped) = $ksqlc->run('DROP TABLE `event_table`');
 
