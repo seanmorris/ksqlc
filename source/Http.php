@@ -95,7 +95,7 @@ class Http
 			return $carry;
 
 		}, (object) [
-			'http'     => 0
+			'http'     => 1
 			, 'code'   => 0
 			, 'time'   => microtime(true)
 			, 'status' => '0 ERROR'
