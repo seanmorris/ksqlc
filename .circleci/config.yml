@@ -34,6 +34,15 @@ workflows:
   test-8_0:
     jobs:
       - test-8_0
+  test-8_1:
+    jobs:
+      - test-8_1
+  test-8_2:
+    jobs:
+      - test-8_2
+  test-8_3:
+    jobs:
+      - test-8_3
 
 jobs:
   test-7_0:
