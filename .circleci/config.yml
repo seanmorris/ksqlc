@@ -37,7 +37,7 @@ workflows:
 jobs:
   test-7_0:
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2204:2023.10.1
     steps:
       - run: curl -X PURGE https://camo.githubusercontent.com/a1143d0c2f429780ee5c3b09e431c0a764b148b8aa840ff159cf6aa7f641a8cf/68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d375f303f6c6162656c3d7068702b372e30
       - checkout
@@ -47,7 +47,7 @@ jobs:
 
   test-7_1:
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2204:2023.10.1
     steps:
       - run: curl -X PURGE https://camo.githubusercontent.com/070939badbeee37d9686d77ed60661132cfdc44a83f86bb89f1923d3941955ca/68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d375f313f6c6162656c3d7068702b372e31
       - checkout
@@ -57,7 +57,7 @@ jobs:
 
   test-7_2:
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2204:2023.10.1
     steps:
       - run: curl -X PURGE https://camo.githubusercontent.com/5773077a6d6468a96196183ec7b3b471dd2068e9afff86d3f89ac4cd831709ae/68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d375f323f6c6162656c3d7068702b372e32
       - checkout
@@ -67,7 +67,7 @@ jobs:
 
   test-7_3:
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2204:2023.10.1
     steps:
       - run: curl -X PURGE https://camo.githubusercontent.com/6309915730922e54c6f6dc3e456edd3399b9c660f7bc2e8f1894c1ab9c1468e1/68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d375f333f6c6162656c3d7068702b372e33
       - checkout
@@ -77,7 +77,7 @@ jobs:
 
   test-7_4:
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2204:2023.10.1
     steps:
       - run: curl -X PURGE https://camo.githubusercontent.com/27e27b2a1ce789ce51913a5b009c50106fb0261a36023df61261ed9a9f92d85c/68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d375f343f6c6162656c3d7068702b372e34
       - checkout
@@ -87,7 +87,7 @@ jobs:
 
   test-8_0:
     machine:
-      image: ubuntu-1604:201903-01
+      image: ubuntu-2204:2023.10.1
     steps:
       - run: curl -X PURGE https://camo.githubusercontent.com/f968fc3032c06a32d78e65c0aaefd8166ba8213b344905c742ded9dfd0200903/68747470733a2f2f7365616e6d6f727269732d6261646765722e6865726f6b756170702e636f6d2f6b73716c632f746573742d385f303f6c6162656c3d7068702b382e30
       - checkout
