@@ -1,4 +1,4 @@
-FROM debian:buster-20191118-slim as base
+FROM debian:bookworm-20240211-slim as base
 MAINTAINER Sean Morris <ksqlc@seanmorr.is>
 
 ARG PHP_VERSION
