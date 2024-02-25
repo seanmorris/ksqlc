@@ -5,14 +5,19 @@ use PHPUnit\Framework\TestCase, \InvalidArgumentException, \SeanMorris\Ksqlc\Ksq
 
 final class FunctionalTest extends TestCase
 {
+	private function _objectHasProperty($property, $object)
+	{
+		$this->assertTrue(property_exists($object, $property));
+	}
+
 	public function testInfo()
 	{
 		$ksqlc = new Ksqlc('http://ksql-server:8088');
 		$info  = $ksqlc->info();
 
-		$this->assertObjectHasAttribute('kafkaClusterId', $info);
-		$this->assertObjectHasAttribute('ksqlServiceId', $info);
-		$this->assertObjectHasAttribute('version', $info);
+		$this->_objectHasProperty('kafkaClusterId', $info);
+		$this->_objectHasProperty('ksqlServiceId', $info);
+		$this->_objectHasProperty('version', $info);
 	}
 
 	public function testStreams()
@@ -40,25 +45,21 @@ final class FunctionalTest extends TestCase
 
 		$this->assertInstanceOf(Status::CLASS, $streamCreated);
 
-		$this->assertObjectHasAttribute('type', $streamCreated);
-		$this->assertObjectHasAttribute('warnings', $streamCreated);
-		$this->assertObjectHasAttribute('statementText', $streamCreated);
+		$this->_objectHasProperty('type', $streamCreated);
+		$this->_objectHasProperty('warnings', $streamCreated);
+		$this->_objectHasProperty('statementText', $streamCreated);
 
 		list($streams) = $ksqlc->run('SHOW STREAMS');
 
 		$this->assertInstanceOf(Result::CLASS, $streams);
 
-		$this->assertObjectHasAttribute('type', $streams);
-		$this->assertObjectHasAttribute('warnings', $streams);
-		$this->assertObjectHasAttribute('statementText', $streams);
+		$this->_objectHasProperty('type', $streams);
+		$this->_objectHasProperty('warnings', $streams);
+		$this->_objectHasProperty('statementText', $streams);
 
-		$describe = $ksqlc->run(
-			'DESCRIBE `event_stream`'
-			, 'DESCRIBE EXTENDED `event_stream`'
-		);
+		$describe = $ksqlc->run('DESCRIBE `event_stream`');
 
-		$delay = rand(1,1000) / 1000;
-		$count = rand(1,10);
+		$count = 1000;
 
 		$query = "SELECT *
 			FROM  `event_stream`
@@ -119,14 +120,18 @@ final class FunctionalTest extends TestCase
 
 		$this->assertInstanceOf(Status::CLASS, $streamDropped);
 
-		$this->assertObjectHasAttribute('type', $streamDropped);
-		$this->assertObjectHasAttribute('warnings', $streamDropped);
-		$this->assertObjectHasAttribute('statementText', $streamDropped);
+		$this->_objectHasProperty('type', $streamDropped);
+		$this->_objectHasProperty('warnings', $streamDropped);
+		$this->_objectHasProperty('statementText', $streamDropped);
 	}
 
 	public function testTables()
 	{
 		$ksqlc = new Ksqlc('http://ksql-server:8088');
+
+		list($dropIfExists) = $ksqlc->run(
+			'DROP TABLE IF EXISTS `event_table`'
+		);
 
 		list($tableCreated) = $ksqlc->run(
 			"CREATE TABLE `event_table` (
@@ -142,32 +147,26 @@ final class FunctionalTest extends TestCase
 
 		$this->assertInstanceOf(Status::CLASS, $tableCreated);
 
-		$this->assertObjectHasAttribute('type', $tableCreated);
-		$this->assertObjectHasAttribute('warnings', $tableCreated);
-		$this->assertObjectHasAttribute('statementText', $tableCreated);
+		$this->_objectHasProperty('type', $tableCreated);
+		$this->_objectHasProperty('warnings', $tableCreated);
+		$this->_objectHasProperty('statementText', $tableCreated);
 
 		list($tables) = $ksqlc->run('SHOW TABLES');
 
 		$this->assertInstanceOf(Result::CLASS, $tables);
 
-		$this->assertObjectHasAttribute('type', $tables);
-		$this->assertObjectHasAttribute('warnings', $tables);
-		$this->assertObjectHasAttribute('statementText', $tables);
+		$this->_objectHasProperty('type', $tables);
+		$this->_objectHasProperty('warnings', $tables);
+		$this->_objectHasProperty('statementText', $tables);
 
-		$run = $ksqlc->run(
-			'DESCRIBE `event_table`'
-			, 'DESCRIBE EXTENDED `event_table`'
-		);
-
-		list($describe, $extended) = $run;
-
+		list($describe) = $ksqlc->run('DESCRIBE `event_table`');
 		list($tableDropped) = $ksqlc->run('DROP TABLE `event_table`');
 
 		$this->assertInstanceOf(Status::CLASS, $tableDropped);
 
-		$this->assertObjectHasAttribute('type', $tableDropped);
-		$this->assertObjectHasAttribute('warnings', $tableDropped);
-		$this->assertObjectHasAttribute('statementText', $tableDropped);
+		$this->_objectHasProperty('type', $tableDropped);
+		$this->_objectHasProperty('warnings', $tableDropped);
+		$this->_objectHasProperty('statementText', $tableDropped);
 	}
 
 	public function testShowQueries()
@@ -178,9 +177,9 @@ final class FunctionalTest extends TestCase
 
 		$this->assertInstanceOf(Result::CLASS, $queries);
 
-		$this->assertObjectHasAttribute('type', $queries);
-		$this->assertObjectHasAttribute('warnings', $queries);
-		$this->assertObjectHasAttribute('statementText', $queries);
+		$this->_objectHasProperty('type', $queries);
+		$this->_objectHasProperty('warnings', $queries);
+		$this->_objectHasProperty('statementText', $queries);
 	}
 
 	public function testCreateAndDropAllAtOnce()
@@ -204,14 +203,14 @@ final class FunctionalTest extends TestCase
 
 		$this->assertInstanceOf(Status::CLASS, $streamCreated);
 
-		$this->assertObjectHasAttribute('type', $streamCreated);
-		$this->assertObjectHasAttribute('warnings', $streamCreated);
-		$this->assertObjectHasAttribute('statementText', $streamCreated);
+		$this->_objectHasProperty('type', $streamCreated);
+		$this->_objectHasProperty('warnings', $streamCreated);
+		$this->_objectHasProperty('statementText', $streamCreated);
 
 		$this->assertInstanceOf(Status::CLASS, $streamDropped);
 
-		$this->assertObjectHasAttribute('type', $streamDropped);
-		$this->assertObjectHasAttribute('warnings', $streamDropped);
-		$this->assertObjectHasAttribute('statementText', $streamDropped);
+		$this->_objectHasProperty('type', $streamDropped);
+		$this->_objectHasProperty('warnings', $streamDropped);
+		$this->_objectHasProperty('statementText', $streamDropped);
 	}
 }

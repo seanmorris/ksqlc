@@ -32,6 +32,8 @@ class Krest
 	{
 		$response = static::$Http::get(
 			$this->endpoint . '/topics'
+			, NULL
+			, ['Connection: close']
 		);
 
 		if($response->code !== HTTP::STATUS_OK)
