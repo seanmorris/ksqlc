@@ -20,9 +20,7 @@ class Krest
 	{
 		if(!filter_var($endpoint, FILTER_VALIDATE_URL))
 		{
-			throw new \InvalidArgumentException(
-				'Invalid endpoint.'
-			);
+			throw new \InvalidArgumentException('Invalid endpoint.');
 		}
 
 		$this->endpoint = $endpoint;
@@ -50,9 +48,7 @@ class Krest
 
 		if(!$result = json_decode($raw))
 		{
-			throw new \UnexpectedValueException(
-				'Unexpected formatting in HTTP response.'
-			);
+			throw new \UnexpectedValueException('Unexpected formatting in HTTP response.');
 		}
 
 		return $result;

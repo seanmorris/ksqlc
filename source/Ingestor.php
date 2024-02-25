@@ -12,7 +12,7 @@ trait Ingestor
 
 	/**
 	 * Ingest a data structure.
-	 * 
+	 *
 	 * @param array/object $blob Data to ingest.
 	 */
 	public function ingest($blob)
@@ -21,9 +21,7 @@ trait Ingestor
 
 		if(!isset($blob->{ '@type' }))
 		{
-			throw new \InvalidArgumentException(
-				'Blob does not specify a @type.'
-			);	
+			throw new \InvalidArgumentException('Blob does not specify a @type.');
 		}
 
 		$this->type = $blob->{ '@type' };
@@ -36,9 +34,7 @@ trait Ingestor
 
 		if($this->blob)
 		{
-			throw new \BadMethodCallException(
-				'Cannot ingest twice.'
-			);
+			throw new \BadMethodCallException('Cannot ingest twice.');
 		}
 
 		$this->blob = $blob;
@@ -56,9 +52,9 @@ trait Ingestor
 
 	/**
 	 * Allow readonly access to protected keys.
-	 * 
+	 *
 	 * @param string $name The property being read.
-	 * 
+	 *
 	 * @return mixed The value of the property.
 	 */
 	public function __get($name)
