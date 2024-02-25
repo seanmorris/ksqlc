@@ -1,6 +1,6 @@
 {
 	"name": "seanmorris/ksqlc",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "The Asynchronous PHP KSQL Connector",
 	"keywords": [
 		"kafka",
