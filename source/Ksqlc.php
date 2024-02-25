@@ -57,9 +57,9 @@ class Ksqlc
 	 *
 	 * @param string $endpoint The URL to KSQLDB's REST endpoint.
 	 */
-	public function escape($identifier)
+	public function escape($unescaped)
 	{
-		return str_replace("'", "''", $identifier);
+		return str_replace("'", "''", $unescaped);
 	}
 
 	/**
@@ -167,9 +167,7 @@ class Ksqlc
 		if($response->code !== HTTP::STATUS_OK)
 		{
 			throw new UnexpectedValueException(
-				'Unexpected HTTP response: '
-					. PHP_EOL
-					. stream_get_contents($response->stream)
+				'Unexpected HTTP response: '. PHP_EOL. stream_get_contents($response->stream)
 				, $response->code
 			);
 		}

@@ -21,4 +21,12 @@ final class KsqlcTest extends TestCase
 
 		$ksqlc = new \SeanMorris\Ksqlc\Ksqlc('invalid/:-url');
 	}
+
+	public function testEscapeString()
+	{
+		$ksqlc = new Ksqlc('http://valid-url:8088/');
+
+		$this->assertEquals("FAKE ''QUERY'';", $ksqlc->escape("FAKE 'QUERY';"));
+		$this->assertEquals("ANOTHER ''FAKE'' ''QUERY'';", $ksqlc->escape("ANOTHER 'FAKE' 'QUERY';"));
+	}
 }
