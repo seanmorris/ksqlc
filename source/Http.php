@@ -15,9 +15,9 @@ class Http
 	 *
 	 * @return object An object detailing the HTTP headers, with a readable STREAM containing the actual response body.
 	 */
-	public static function get($url, $content = NULL)
+	public static function get($url, $content = NULL, $headers = [])
 	{
-		return static::openRequest('GET', $url);
+		return static::openRequest('GET', $url, $content, $headers);
 	}
 
 	/**
@@ -28,9 +28,9 @@ class Http
 	 *
 	 * @return object An object detailing the HTTP headers, with a readable STREAM containing the actual response body.
 	 */
-	public static function post($url, $content = NULL)
+	public static function post($url, $content = NULL, $headers = [])
 	{
-		return static::openRequest('POST', $url, $content);
+		return static::openRequest('POST', $url, $content, $headers);
 	}
 
 	/**
@@ -53,17 +53,16 @@ class Http
 	 *
 	 * @return object An object detailing the HTTP headers, with a readable stream resource containing the actual response body.
 	 */
-	public static function openRequest($method, $url, $content = NULL)
+	public static function openRequest($method, $url, $content = NULL, $headers = [])
 	{
 		$context = stream_context_create(['http' => [
 			'protocol_version' => 1.1
 			, 'ignore_errors' => true
 			, 'content'     => $content
 			, 'method'      => $method
-			, 'header'      => [
+			, 'header'      => $headers + [
 				'Content-Type: application/vnd.kafka.json.v2+json'
 				, 'Accept: application/vnd.kafka.v2+json, application/vnd.kafka+json, application/json'
-				, 'Connection: close'
 			]
 		]]);
 

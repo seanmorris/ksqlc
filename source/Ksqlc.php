@@ -37,7 +37,8 @@ class Ksqlc
 	 */
 	public function info()
 	{
-		$http = static::$Http::get($this->endpoint . '/info');
+
+		$http = static::$Http::get($this->endpoint . '/info', NULL, ['Connection: close']);
 		$json = stream_get_contents($http->stream);
 		$body = json_decode($json);
 
@@ -202,10 +203,6 @@ class Ksqlc
 
 			break;
 		}
-
-		list($buffer) = sscanf($buffer, "[%[^[]]");
-
-		$buffer = substr($buffer, 0, -1);
 
 		stream_set_chunk_size($response->stream, 1);
 		stream_set_read_buffer($response->stream, 0);
