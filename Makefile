@@ -6,11 +6,11 @@ PHP_VERSION?=7.3
 
 build-test:
 	PHP_VERSION=${PHP_VERSION} \
-	docker-compose --progress plain -f test/docker-compose.yml build
+	docker-compose --progress plain -f test/docker-compose.yml build --quiet
 
 test:
 	PHP_VERSION=${PHP_VERSION} \
-	docker-compose --progress plain -f test/docker-compose.yml run -T \
+	docker-compose --progress plain -f test/docker-compose.yml run --quiet-pull -T \
 		php /app/vendor/bin/phpunit \
 			--whitelist=source/ \
 			--coverage-clover=/app/coverage.xml \
