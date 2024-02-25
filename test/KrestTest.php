@@ -25,7 +25,7 @@ final class KrestTest extends TestCase
 	{
 		$krest = new Krest('http://krest-server:8082');
 		$topics = $krest->topics();
-		$this->assertIsArray($topics);
+		$this->assertTrue(is_array($topics));
 	}
 
 	public function testFailingTopics()
