@@ -36,7 +36,7 @@ $ composer require seanmorris/ksqlc
 
 #### Open a connection
 
-Grab the URL to your KSQL server's REST endpoint, and it use it to create a new `Ksqlc` object to begin:
+Grab the URL to your KSQL server's REST endpoint, and use it to create a new `Ksqlc` object to begin:
 
 ```php
 <?php
