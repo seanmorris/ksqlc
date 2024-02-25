@@ -41,10 +41,7 @@ final class FunctionalTest extends TestCase
 			)"
 		);
 
-		$this->assertEquals(
-			'SUCCESS'
-			, $streamCreated->status
-		);
+		$this->assertEquals('SUCCESS', $streamCreated->status);
 
 		$this->assertInstanceOf(Status::CLASS, $streamCreated);
 
