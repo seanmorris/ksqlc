@@ -6,11 +6,11 @@ PHP_VERSION?=7.3
 
 build-test:
 	PHP_VERSION=${PHP_VERSION} \
-	docker-compose -f test/docker-compose.yml build
+	docker-compose --progress plain -f test/docker-compose.yml build
 
 test:
 	PHP_VERSION=${PHP_VERSION} \
-	docker-compose -f test/docker-compose.yml run -T \
+	docker-compose --progress plain -f test/docker-compose.yml run -T \
 		php /app/vendor/bin/phpunit \
 			--whitelist=source/ \
 			--coverage-clover=/app/coverage.xml \
@@ -18,7 +18,7 @@ test:
 
 start:
 	PHP_VERSION=${PHP_VERSION} \
-	docker-compose -f test/docker-compose.yml up -d
+	docker-compose --progress plain -f test/docker-compose.yml up -d
 
 SECONDS?=120
 
@@ -27,15 +27,15 @@ wait:
 
 stop:
 	PHP_VERSION=${PHP_VERSION} \
-	docker-compose -f test/docker-compose.yml down
+	docker-compose --progress plain -f test/docker-compose.yml down
 
 push-images:
 	PHP_VERSION=${PHP_VERSION} \
-	docker-compose -f test/docker-compose.yml push
+	docker-compose --progress plain -f test/docker-compose.yml push
 
 pull-images:
 	PHP_VERSION=${PHP_VERSION} \
-	docker-compose -f test/docker-compose.yml pull
+	docker-compose --progress plain -f test/docker-compose.yml pull
 
 push-coverage:
 	wget -qO- https://codecov.io/bash | CODECOV_TOKEN=${CODECOV_TOKEN} bash
