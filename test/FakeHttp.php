@@ -20,7 +20,7 @@ class FakeHttp
 			, 'code'   => 0
 			, 'status' => '0 ERROR'
 			, 'header' => (object) []
-			, 'stream' => false
+			, 'stream' => fopen('php://memory', 'r')
 		];
 	}
 }

@@ -37,7 +37,6 @@ class Ksqlc
 	 */
 	public function info()
 	{
-
 		$http = static::$Http::get($this->endpoint . '/info', NULL, ['Connection: close']);
 		$json = stream_get_contents($http->stream);
 		$body = json_decode($json);

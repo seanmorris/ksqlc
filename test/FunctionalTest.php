@@ -1,7 +1,13 @@
 <?php
 namespace SeanMorris\Ksqlc\Test;
 
-use PHPUnit\Framework\TestCase, \InvalidArgumentException, \SeanMorris\Ksqlc\Ksqlc, \SeanMorris\Ksqlc\Status, \SeanMorris\Ksqlc\Result, \SeanMorris\Ksqlc\Krest, \stdClass;
+use PHPUnit\Framework\TestCase
+	, \InvalidArgumentException
+	, \SeanMorris\Ksqlc\Ksqlc
+	, \SeanMorris\Ksqlc\Status
+	, \SeanMorris\Ksqlc\Result
+	, \SeanMorris\Ksqlc\Krest
+	, \stdClass;
 
 final class FunctionalTest extends TestCase
 {
@@ -59,7 +65,7 @@ final class FunctionalTest extends TestCase
 
 		$describe = $ksqlc->run('DESCRIBE `event_stream`');
 
-		$count = 1000;
+		$count = 100000;
 
 		$query = "SELECT *
 			FROM  `event_stream`

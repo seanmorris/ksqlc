@@ -5,14 +5,14 @@ use PHPUnit\Framework\TestCase, \InvalidArgumentException, \SeanMorris\Ksqlc\Ksq
 
 final class KsqlcTest extends TestCase
 {
-	public function testGoodConnection()
+	public function testGoodUrl()
 	{
 		$ksqlc = new Ksqlc('http://valid-url:8088/');
 
 		$this->assertInstanceOf(Ksqlc::CLASS, $ksqlc);
 	}
 
-	public function testBadConnection()
+	public function testBadUrl()
 	{
 		$this->expectException(InvalidArgumentException::class);
 
