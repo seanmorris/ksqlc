@@ -1,18 +1,21 @@
 <?php
 namespace SeanMorris\Ksqlc\Test;
 
-use PHPUnit\Framework\TestCase, \InvalidArgumentException, \SeanMorris\Ksqlc\Ksqlc;
+use PHPUnit\Framework\TestCase
+	, \InvalidArgumentException
+	, \SeanMorris\Ksqlc\Ksqlc
+	, \SeanMorris\Ksqlc\Test\FakeHttp;
 
 final class KsqlcTest extends TestCase
 {
-	public function testGoodUrl()
+	public function testValidUrl()
 	{
 		$ksqlc = new Ksqlc('http://valid-url:8088/');
 
 		$this->assertInstanceOf(Ksqlc::CLASS, $ksqlc);
 	}
 
-	public function testBadUrl()
+	public function testInvalidUrl()
 	{
 		$this->expectException(InvalidArgumentException::class);
 

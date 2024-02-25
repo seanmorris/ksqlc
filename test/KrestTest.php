@@ -9,16 +9,23 @@ use PHPUnit\Framework\TestCase
 
 final class KrestTest extends TestCase
 {
-	public function testGoodUrl()
+	public function testValidUrl()
 	{
 		$krest = new Krest('http://valid-url:8082/');
 		$this->assertInstanceOf(Krest::CLASS, $krest);
 	}
 
-	public function testBadUrl()
+	public function testInvalidUrl()
 	{
 		$this->expectException(InvalidArgumentException::class);
 		$krest = new \SeanMorris\Ksqlc\Krest('invalid/:-url');
+	}
+
+	public function testTopics()
+	{
+		$krest = new Krest('http://krest-server:8082');
+		$topics = $krest->topics();
+		$this->assertIsArray($topics);
 	}
 
 	public function testFailingTopics()

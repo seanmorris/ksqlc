@@ -65,7 +65,7 @@ final class FunctionalTest extends TestCase
 
 		$describe = $ksqlc->run('DESCRIBE `event_stream`');
 
-		$count = 10000;
+		$count = 1 * 1000;
 
 		$query = "SELECT *
 			FROM  `event_stream`

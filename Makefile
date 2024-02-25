@@ -20,6 +20,10 @@ start:
 	PHP_VERSION=${PHP_VERSION} \
 	docker-compose --progress plain -f test/docker-compose.yml up --quiet-pull -d
 
+start-fg:
+	PHP_VERSION=${PHP_VERSION} \
+	docker-compose --progress plain -f test/docker-compose.yml up --quiet-pull
+
 SECONDS?=120
 
 wait:
