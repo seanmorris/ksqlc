@@ -62,8 +62,7 @@ final class FunctionalTest extends TestCase
 
 		$describe = $ksqlc->run('DESCRIBE `event_stream`');
 
-		$delay = rand(1,1000) / 1000;
-		$count = rand(1,10);
+		$count = 1000;
 
 		$query = "SELECT *
 			FROM  `event_stream`
