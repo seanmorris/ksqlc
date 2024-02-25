@@ -37,7 +37,7 @@ class Krest
 		if($response->code !== HTTP::STATUS_OK)
 		{
 			throw new \UnexpectedValueException(
-				'Unexpected HTTP response, (' . $response->code . ') : '
+				'Unexpected HTTP response: '
 					. PHP_EOL
 					. stream_get_contents($response->stream)
 				, $response->code
@@ -77,9 +77,7 @@ class Krest
 		if($response->code !== HTTP::STATUS_OK)
 		{
 			throw new \UnexpectedValueException(
-				'Unexpected HTTP response, (' . $response->code . ') : '
-					. PHP_EOL
-					. print_r($response->header, true)
+				'Unexpected HTTP response: '
 					. PHP_EOL
 					. stream_get_contents($response->stream)
 				, $response->code

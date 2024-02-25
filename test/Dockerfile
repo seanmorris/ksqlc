@@ -5,8 +5,8 @@ ARG PHP_VERSION
 
 SHELL ["/bin/bash", "-euxc"]
 
-RUN apt update;      \
-	apt install -y --no-install-recommends software-properties-common \
+RUN apt-get update;      \
+	apt-get install -y --no-install-recommends software-properties-common \
 		ca-certificates  \
 		lsb-release      \
 		gnupg            \
@@ -17,8 +17,8 @@ RUN apt update;      \
 		 | tee /etc/apt/sources.list.d/sury-php.list"; \
 	wget https://snapshot.debian.org/archive/debian/20190531T031011Z/pool/main/o/openssl/libssl1.1_1.1.1c-1_amd64.deb; \
 	dpkg -i libssl1.1_1.1.1c-1_amd64.deb; \
-	apt update;      \
-	apt install -y --no-install-recommends \
+	apt-get update;      \
+	apt-get install -y --no-install-recommends \
 		php${PHP_VERSION}           \
 		php${PHP_VERSION}-cli       \
 		php${PHP_VERSION}-common    \
@@ -32,7 +32,7 @@ RUN apt update;      \
 	[[ $(${PHP_VERSION} | cut -c1) = '7' ]] && apt-get install -y --no-install-recommends \
 		php${PHP_VERSION}-json      \
 		php${PHP_VERSION}-yaml;     \
-	apt remove -y software-properties-common \
+	apt-get remove -y software-properties-common \
 		apache2-bin         \
 		apt-transport-https \
 		ca-certificates     \
@@ -41,9 +41,9 @@ RUN apt update;      \
 		perl                \
 		python              \
 		wget;               \
-	apt purge -y --auto-remove; \
-	apt autoremove -y;          \
-	apt clean;                  \
+	apt-get purge -y --auto-remove; \
+	apt-get autoremove -y;          \
+	apt-get clean;                  \
 	rm -rf /var/lib/apt/lists/*     \
 	mkdir /app;
 
