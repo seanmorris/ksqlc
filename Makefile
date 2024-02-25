@@ -6,7 +6,7 @@ PHP_VERSION?=7.3
 
 build-test:
 	PHP_VERSION=${PHP_VERSION} \
-	docker-compose --progress plain -f test/docker-compose.yml build --quiet
+	docker-compose --progress plain -f test/docker-compose.yml build
 
 test:
 	PHP_VERSION=${PHP_VERSION} \
