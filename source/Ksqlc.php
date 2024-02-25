@@ -166,10 +166,7 @@ class Ksqlc
 
 		if($response->code !== HTTP::STATUS_OK)
 		{
-			throw new UnexpectedValueException(
-				'Unexpected HTTP response: '. PHP_EOL. stream_get_contents($response->stream)
-				, $response->code
-			);
+			throw new UnexpectedValueException("Unexpected HTTP response: \n". stream_get_contents($response->stream), $response->code);
 		}
 
 		$buffer = NULL;
