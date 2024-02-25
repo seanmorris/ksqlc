@@ -4,8 +4,7 @@
 	"description": "The Asynchronous PHP KSQL Connector",
 	"keywords": [
 		"kafka",
-		"ksql",
-		"ksqlc"
+		"ksql"
 	],
 	"type": "library",
 	"license": "Apache-2.0",
