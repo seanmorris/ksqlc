@@ -83,7 +83,10 @@ $stream = $ksqlc->multiplex(
 	[$queryTwo, 'earliest']
 );
 
-foreach($stream as $row) { /* Stream processing... */ }
+foreach($stream as $row)
+{
+	/* Stream processing... */
+}
 ```
 
 #### Limits
