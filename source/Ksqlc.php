@@ -149,6 +149,7 @@ class Ksqlc
 	 *
 	 * @param string $endpoint The KSQL statement to execute.
 	 * @param string $offsetReset earliest/latest.
+	 * @param bool $async asyncronous streaming.
 	 *
 	 * @return Generator The generator that can be iterated for results.
 	 */
@@ -166,7 +167,12 @@ class Ksqlc
 
 		if($response->code !== HTTP::STATUS_OK)
 		{
-			throw new UnexpectedValueException("Unexpected HTTP response: \n". stream_get_contents($response->stream), $response->code);
+			throw new UnexpectedValueException(
+				'Unexpected HTTP response: '
+					. PHP_EOL
+					. stream_get_contents($response->stream)
+				, $response->code
+			);
 		}
 
 		$buffer = NULL;
