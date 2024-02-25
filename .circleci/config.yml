@@ -117,5 +117,5 @@ jobs:
     steps:
       - checkout
       - install-composer
-      - run: composer require --dev phpunit/phpunit:^10 --ignore-platform-reqs --with-all-dependencies
+      - run: composer require --dev phpunit/phpunit:^9 --ignore-platform-reqs --with-all-dependencies
       - run: make PHP_VERSION=8.3 build-test start wait test push-coverage stop
