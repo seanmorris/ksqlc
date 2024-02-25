@@ -42,7 +42,7 @@ class Http
 	 * ->code   - The HTTP response code
 	 * ->time   - When the server responded (local system time)
 	 * ->status - The HTTP status line.
-	 * ->header - Associative array of headers
+	 * ->header - STDOBJ of headers
 	 * ->stream - Stream resource containing response body
 	 * ->method - The method used in the request
 	 * ->url    - The URL used in the request
@@ -56,20 +56,20 @@ class Http
 	public static function openRequest($method, $url, $content = NULL)
 	{
 		$context = stream_context_create(['http' => [
-			'protocol_version' => 2.0
+			'protocol_version' => 1.1
 			, 'ignore_errors' => true
 			, 'content'     => $content
 			, 'method'      => $method
 			, 'header'      => [
-				'Content-Type: application/vnd.kafka.json.v1+json'
-				, 'Accept: application/vnd.kafka.v1+json, application/vnd.kafka+json, application/json'
+				'Content-Type: application/vnd.kafka.json.v2+json'
+				, 'Accept: application/vnd.kafka.v2+json, application/vnd.kafka+json, application/json'
+				, 'Connection: close'
 			]
 		]]);
 
 		$handle = fopen($url, 'r', FALSE, $context);
 
 		return array_reduce($http_response_header, function($carry, $header){
-
 			if(stripos($header, 'HTTP/') === 0)
 			{
 				$header = strtoupper($header);

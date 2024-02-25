@@ -105,7 +105,6 @@ class Ksqlc
 
 		$rawResponse = stream_get_contents($response->stream);
 
-
 		if(!$response = json_decode($rawResponse))
 		{
 			throw new UnexpectedValueException(
@@ -199,8 +198,7 @@ class Ksqlc
 				continue;
 			}
 
-			$buffer   = substr($buffer, 0, -1);
-			list($buffer) = sscanf($buffer, '[%[^\0]');
+			$buffer = substr($buffer, 1, -1);
 
 			break;
 		}

@@ -79,6 +79,8 @@ class Krest
 			throw new \UnexpectedValueException(
 				'Unexpected HTTP response, (' . $response->code . ') : '
 					. PHP_EOL
+					. print_r($response->header, true)
+					. PHP_EOL
 					. stream_get_contents($response->stream)
 				, $response->code
 			);
