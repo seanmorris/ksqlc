@@ -167,7 +167,7 @@ You can also use list destructuring to get the results of multiple queries all a
 <?php
 [$streams, $tables] = $ksqlc->run('SHOW STREAMS', 'SHOW TABLES');
 
-foreach($streams as $streams)
+foreach($streams as $stream)
 {
 	// ...
 }
