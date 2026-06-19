@@ -24,14 +24,27 @@ RUN apt-get update;      \
 		php${PHP_VERSION}-common    \
 		php${PHP_VERSION}-dom       \
 		php${PHP_VERSION}-mbstring  \
-		php${PHP_VERSION}-opcache   \
 		php${PHP_VERSION}-pdo-mysql \
 		php${PHP_VERSION}-readline  \
-		php${PHP_VERSION}-xdebug    \
 		php${PHP_VERSION}-xml;      \
-	[[ $(${PHP_VERSION} | cut -c1) = '7' ]] && apt-get install -y --no-install-recommends \
-		php${PHP_VERSION}-json      \
-		php${PHP_VERSION}-yaml;     \
+	for PACKAGE in                  \
+		php${PHP_VERSION}-opcache   \
+		php${PHP_VERSION}-xdebug;   \
+	do                              \
+		if apt-cache show ${PACKAGE} >/dev/null 2>&1; then \
+			apt-get install -y --no-install-recommends ${PACKAGE}; \
+		fi;                         \
+	done;                           \
+	if [[ "${PHP_VERSION}" = 7* ]]; then \
+		for PACKAGE in              \
+			php${PHP_VERSION}-json  \
+			php${PHP_VERSION}-yaml; \
+		do                          \
+			if apt-cache show ${PACKAGE} >/dev/null 2>&1; then \
+				apt-get install -y --no-install-recommends ${PACKAGE}; \
+			fi;                     \
+		done;                       \
+	fi;                             \
 	apt-get remove -y software-properties-common \
 		apache2-bin         \
 		apt-transport-https \
@@ -44,7 +57,7 @@ RUN apt-get update;      \
 	apt-get purge -y --auto-remove; \
 	apt-get autoremove -y;          \
 	apt-get clean;                  \
-	rm -rf /var/lib/apt/lists/*     \
+	rm -rf /var/lib/apt/lists/*;    \
 	mkdir /app;
 
 WORKDIR /app
