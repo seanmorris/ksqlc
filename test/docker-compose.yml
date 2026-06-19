@@ -16,7 +16,7 @@ services:
       - krest-server
 
   kafka:
-    image: bitnami/kafka:2
+    image: bitnami/kafka:latest
     restart: always
     environment:
       KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -25,7 +25,7 @@ services:
       - zookeeper
 
   zookeeper:
-    image: bitnami/zookeeper:3
+    image: bitnami/zookeeper:latest
     restart: always
     environment:
       ALLOW_ANONYMOUS_LOGIN: 'yes'
@@ -36,6 +36,7 @@ services:
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:2181
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
     depends_on:
     - kafka
     - zookeeper
@@ -52,10 +53,11 @@ services:
       - schema-registry
 
   krest-server:
-    image: confluentinc/cp-kafka-rest:4.0.0
+    image: confluentinc/cp-kafka-rest:latest
     restart: always
     ports: ['8082:8082']
     environment:
+      KAFKA_REST_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
       KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       KAFKA_REST_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_REST_LISTENERS: http://0.0.0.0:8082

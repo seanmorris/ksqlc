@@ -1,7 +1,6 @@
 <?php
 namespace SeanMorris\Ksqlc;
 
-use Generator;
 use \InvalidArgumentException, \UnexpectedValueException;
 
 /**
@@ -19,13 +18,11 @@ class Ksqlc
 	 *
 	 * @param string $endpoint The URL to KSQLDB's REST endpoint.
 	 */
-	public function __construct(string $endpoint)
+	public function __construct($endpoint)
 	{
 		if(!filter_var($endpoint, FILTER_VALIDATE_URL))
 		{
-			throw new InvalidArgumentException(
-				'Invalid endpoint.'
-			);
+			throw new InvalidArgumentException('Invalid endpoint.');
 		}
 
 		$this->endpoint = $endpoint;
@@ -37,25 +34,31 @@ class Ksqlc
 	 */
 	public function info()
 	{
-		$http = static::$Http::get($this->endpoint . '/info');
+		$http = static::$Http::get($this->endpoint . '/info', NULL, ['Connection: close']);
 		$json = stream_get_contents($http->stream);
 		$body = json_decode($json);
 
 		if(!$body)
 		{
-			throw new UnexpectedValueException(
-				'Unexpected formatting on query response.'
-			);
+			throw new UnexpectedValueException('Unexpected formatting on query response.');
 		}
 
 		if(!$body->KsqlServerInfo)
 		{
-			throw new UnexpectedValueException(
-				'Unexpected data structure on query response.'
-			);
+			throw new UnexpectedValueException('Unexpected data structure on query response.');
 		}
 
 		return $body->KsqlServerInfo;
+	}
+
+	/**
+	 * Escape a string value for use in a KSQL query.
+	 *
+	 * @param string $endpoint The URL to KSQLDB's REST endpoint.
+	 */
+	public function escape($unescaped)
+	{
+		return str_replace("'", "''", $unescaped);
 	}
 
 	/**
@@ -95,12 +98,9 @@ class Ksqlc
 
 		$rawResponse = stream_get_contents($response->stream);
 
-
 		if(!$response = json_decode($rawResponse))
 		{
-			throw new UnexpectedValueException(
-				'Unexpected formatting on query response.'
-			);
+			throw new UnexpectedValueException('Unexpected formatting on query response.');
 		}
 
 		if(!is_array($response))
@@ -148,24 +148,31 @@ class Ksqlc
 	 *
 	 * @param string $string The KSQL statement to execute
 	 * @param string $offsetReset earliest/latest.
-	 * @param bool $async true/false
+	 * @param bool $async asyncronous streaming.
 	 * @param bool $tableScanEnabled true/false
+	 *
 	 * @return Generator The generator that can be iterated for results.
 	 */
-	public function stream(string $string, string $offsetReset = 'latest', bool $async = FALSE, bool $tableScanEnabled = FALSE): Generator
+	public function stream($string, $offsetReset = 'latest', $async = FALSE, $tableScanEnabled = FALSE)
 	{
+		$streamsProperties = [
+			'ksql.streams.auto.offset.reset' => $offsetReset
+		];
+
+		if($tableScanEnabled)
+		{
+			$streamsProperties['ksql.query.pull.table.scan.enabled'] = 'true';
+		}
+
 		$response = static::$Http::post(
 			$this->endpoint . '/query'
 			, json_encode([
 				'ksql' => $string . ';'
-				, 'streamsProperties' => [
-					'ksql.streams.auto.offset.reset' => $offsetReset,
-					'ksql.query.pull.table.scan.enabled' => $tableScanEnabled
-				]
+				, 'streamsProperties' => $streamsProperties
 			]
 		));
 
-		if($response->code !== HTTP::STATUS_OK)
+		if($response->code !== Http::STATUS_OK)
 		{
 			throw new UnexpectedValueException(
 				'Unexpected HTTP response: '
@@ -191,13 +198,10 @@ class Ksqlc
 				continue;
 			}
 
+			$buffer = substr($buffer, 1, -1);
 
 			break;
 		}
-
-		list($buffer) = sscanf($buffer, "[%[^[]]");
-
-		$buffer = substr($buffer, 0, -1);
 
 		stream_set_chunk_size($response->stream, 1);
 		stream_set_read_buffer($response->stream, 0);
@@ -205,16 +209,12 @@ class Ksqlc
 
 		if(!$record = json_decode($buffer))
 		{
-			throw new UnexpectedValueException(
-				'Unexpected formatting on first line of stream.'
-			);
+			throw new UnexpectedValueException('Unexpected formatting on first line of stream.');
 		}
 
 		if(!($record->header ?? NULL) || !($record->header->schema ?? NULL))
 		{
-			throw new UnexpectedValueException(
-				'Unexpected data structure on first line of stream.'
-			);
+			throw new UnexpectedValueException('Unexpected data structure on first line of stream.');
 		}
 
 		$keyTypes = [];
@@ -253,9 +253,7 @@ class Ksqlc
 
 			if(!$record = json_decode($buffer))
 			{
-				throw new UnexpectedValueException(
-					'Unexpected formatting in stream body.'
-				);
+				throw new UnexpectedValueException('Unexpected formatting in stream body.');
 			}
 
 			$buffer = '';
@@ -267,9 +265,7 @@ class Ksqlc
 
 			if(!($record->row ?? 0) || !($record->row->columns ?? 0))
 			{
-				throw new UnexpectedValueException(
-					'Unexpected data structure in stream body.'
-				);
+				throw new UnexpectedValueException('Unexpected data structure in stream body.');
 			}
 
 			$entry = (object) array_combine(
