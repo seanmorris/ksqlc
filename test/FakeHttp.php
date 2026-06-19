@@ -3,9 +3,11 @@ namespace SeanMorris\Ksqlc\Test;
 
 class FakeHttp
 {
+	public static $requests = [];
+
 	public static function get($url, $content = NULL)
 	{
-		return static::openRequest('GET', $url);
+		return static::openRequest('GET', $url, $content);
 	}
 
 	public static function post($url, $content = NULL)
@@ -15,6 +17,12 @@ class FakeHttp
 
 	public static function openRequest($method, $url, $content = NULL)
 	{
+		static::$requests[] = (object) [
+			'method'  => $method
+			, 'url'   => $url
+			, 'content' => $content
+		];
+
 		return (object) [
 			'http'     => 0
 			, 'code'   => 0

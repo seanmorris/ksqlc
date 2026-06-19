@@ -1,5 +1,3 @@
-version: '2.4'
-
 services:
 
   php:
@@ -16,33 +14,39 @@ services:
       - krest-server
 
   kafka:
-    image: bitnami/kafka:latest
+    image: confluentinc/cp-kafka:7.5.0
     restart: always
     environment:
-      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
-      ALLOW_PLAINTEXT_LISTENER: 'yes'
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
     depends_on:
       - zookeeper
 
   zookeeper:
-    image: bitnami/zookeeper:latest
+    image: confluentinc/cp-zookeeper:7.5.0
     restart: always
     environment:
-      ALLOW_ANONYMOUS_LOGIN: 'yes'
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:latest
+    image: confluentinc/cp-schema-registry:7.5.0
     restart: always
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper:2181
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
     depends_on:
     - kafka
     - zookeeper
 
   ksql-server:
-    image: confluentinc/ksqldb-server:latest
+    image: confluentinc/cp-ksqldb-server:7.5.0
     restart: always
     environment:
       KSQL_KSQL_STREAMS_COMMIT_INTERVAL_MS: 250
@@ -53,7 +57,7 @@ services:
       - schema-registry
 
   krest-server:
-    image: confluentinc/cp-kafka-rest:latest
+    image: confluentinc/cp-kafka-rest:7.5.0
     restart: always
     ports: ['8082:8082']
     environment:

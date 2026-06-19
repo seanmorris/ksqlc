@@ -8,7 +8,6 @@ use \InvalidArgumentException, \UnexpectedValueException;
  */
 class Ksqlc
 {
-	const HTTP_OK = 200;
 	protected $endpoint;
 	protected static $Http;
 
@@ -123,7 +122,7 @@ class Ksqlc
 				{
 					$rr = new Source;
 				}
-				else if($typeSuffix == 'status' || $typeSuffix == '_error')
+				else if($typeSuffix === 'status' || $typeSuffix === '_error')
 				{
 					$rr = new Status;
 				}
@@ -147,25 +146,33 @@ class Ksqlc
 	 * Use this method to issue a select query
 	 * and stream the results back to PHP.
 	 *
-	 * @param string $endpoint The KSQL statement to execute.
+	 * @param string $string The KSQL statement to execute
 	 * @param string $offsetReset earliest/latest.
 	 * @param bool $async asyncronous streaming.
+	 * @param bool $tableScanEnabled true/false
 	 *
 	 * @return Generator The generator that can be iterated for results.
 	 */
-	public function stream($string, $offsetReset = 'latest', $async = FALSE)
+	public function stream($string, $offsetReset = 'latest', $async = FALSE, $tableScanEnabled = FALSE)
 	{
+		$streamsProperties = [
+			'ksql.streams.auto.offset.reset' => $offsetReset
+		];
+
+		if($tableScanEnabled)
+		{
+			$streamsProperties['ksql.query.pull.table.scan.enabled'] = 'true';
+		}
+
 		$response = static::$Http::post(
 			$this->endpoint . '/query'
 			, json_encode([
 				'ksql' => $string . ';'
-				, 'streamsProperties' => [
-					'ksql.streams.auto.offset.reset' => $offsetReset
-				]
+				, 'streamsProperties' => $streamsProperties
 			]
 		));
 
-		if($response->code !== HTTP::STATUS_OK)
+		if($response->code !== Http::STATUS_OK)
 		{
 			throw new UnexpectedValueException(
 				'Unexpected HTTP response: '
