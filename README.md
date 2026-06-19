@@ -14,7 +14,7 @@ Ksqlc is free for distribution, modification, and use under the [Apache-2.0 lice
 
 ### Supports PHP 7.0 - PHP 8.5!
 
-CI runs the full PHP 7.0, 7.1, 7.2, 7.3, 7.4, 8.0, 8.1, 8.2, 8.3, 8.4, and 8.5 matrix. Modernization work should preserve the Composer runtime constraint and avoid syntax or dependency changes that narrow that support.
+Compatibility is verified across PHP 7.0-7.4 and PHP 8.0-8.5. The package keeps its Composer runtime constraint broad so supported projects can upgrade Ksqlc without narrowing their PHP version.
 
 ## Installation
 
@@ -200,7 +200,7 @@ foreach($tables as $table)
 
 ### SeanMorris/Ksqlc
 
-Copyright 2020 - 2024 Sean Morris
+Copyright 2020 - 2026 Sean Morris
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
