@@ -53,12 +53,23 @@ jobs:
           curl -sS https://getcomposer.org/installer | php
           sudo mv composer.phar /usr/local/bin/composer
           composer config platform.php "${PHP_VERSION}.0"
-          if [ "${PHP_VERSION%%.*}" = "7" ]; then
-            composer require --dev phpunit/phpunit:6.5.14 --with-all-dependencies --no-interaction --prefer-dist
-          else
-            composer update --lock --no-install --no-interaction
-            composer install --no-interaction --prefer-dist
-          fi
+          case "${PHP_VERSION}" in
+            7.0)
+              composer config policy.advisories.ignore-id PKSA-z3gr-8qht-p93v
+              composer require --dev phpunit/phpunit:6.5.14 --with-all-dependencies --no-interaction --prefer-dist
+              ;;
+            7.1)
+              composer config policy.advisories.ignore-id PKSA-z3gr-8qht-p93v
+              composer require --dev phpunit/phpunit:^7.5 --with-all-dependencies --no-interaction --prefer-dist
+              ;;
+            7.2)
+              composer require --dev phpunit/phpunit:^8.5 --with-all-dependencies --no-interaction --prefer-dist
+              ;;
+            *)
+              composer update --with-all-dependencies --no-install --no-interaction
+              composer install --no-interaction --prefer-dist
+              ;;
+          esac
 
       - name: Show tool versions
         run: |
