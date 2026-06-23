@@ -1,0 +1,90 @@
+name: Publish to Packagist
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+permissions:
+  contents: read
+
+jobs:
+  validate-release-tag:
+    name: Validate release tag
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Install Composer
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            ca-certificates \
+            curl \
+            php-cli \
+            unzip
+          curl -sS https://getcomposer.org/installer | php
+          sudo mv composer.phar /usr/local/bin/composer
+
+      - name: Validate Composer package
+        run: composer validate --strict --no-check-version
+
+      - name: Validate release tag
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          tag="${GITHUB_REF_NAME}"
+
+          if [[ ! "${tag}" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::Release tags must match X.Y.Z or vX.Y.Z. Got: ${tag}"
+            exit 1
+          fi
+
+          version="$(php -r '$json = json_decode(file_get_contents("composer.json"), true); echo $json["version"] ?? "";')"
+
+          if [[ -z "${version}" ]]; then
+            echo "::error::composer.json must define a version for release tag validation."
+            exit 1
+          fi
+
+          if [[ "${tag#v}" != "${version}" ]]; then
+            echo "::error::Tag ${tag} does not match composer.json version ${version}."
+            exit 1
+          fi
+
+  verify:
+    name: Build and test
+    needs: validate-release-tag
+    uses: ./.github/workflows/ci.yml
+    secrets: inherit
+
+  publish:
+    name: Publish to Packagist
+    needs: verify
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Update Packagist package
+        env:
+          PACKAGIST_USERNAME: ${{ secrets.PACKAGIST_USERNAME }}
+          PACKAGIST_API_TOKEN: ${{ secrets.PACKAGIST_API_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${PACKAGIST_USERNAME}" || -z "${PACKAGIST_API_TOKEN}" ]]; then
+            echo "::error::Set PACKAGIST_USERNAME and PACKAGIST_API_TOKEN repository secrets."
+            exit 1
+          fi
+
+          repository="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
+          payload="$(printf '{"repository":"%s"}' "${repository}")"
+
+          curl --fail-with-body -sS \
+            -X POST \
+            -H 'Content-Type: application/json' \
+            -H "Authorization: Bearer ${PACKAGIST_USERNAME}:${PACKAGIST_API_TOKEN}" \
+            -H 'User-Agent: seanmorris/ksqlc GitHub Actions (mailto=ksqlc@seanmorr.is)' \
+            'https://packagist.org/api/update-package' \
+            -d "${payload}"
