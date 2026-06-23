@@ -55,15 +55,24 @@ class Http
 	 */
 	public static function openRequest($method, $url, $content = NULL, $headers = [])
 	{
+		$defaultHeaders = [
+			'Accept: application/vnd.kafka.v2+json, application/vnd.kafka+json, application/json'
+		];
+
+		if($content !== NULL)
+		{
+			array_unshift(
+				$defaultHeaders
+				, 'Content-Type: application/vnd.kafka.json.v2+json'
+			);
+		}
+
 		$context = stream_context_create(['http' => [
 			'protocol_version' => 1.1
 			, 'ignore_errors' => true
 			, 'content'     => $content
 			, 'method'      => $method
-			, 'header'      => $headers + [
-				'Content-Type: application/vnd.kafka.json.v2+json'
-				, 'Accept: application/vnd.kafka.v2+json, application/vnd.kafka+json, application/json'
-			]
+			, 'header'      => array_merge($defaultHeaders, $headers)
 		]]);
 
 		$handle = fopen($url, 'r', FALSE, $context);

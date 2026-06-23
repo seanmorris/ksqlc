@@ -50,11 +50,6 @@ class StreamIterator extends MultipleIterator
 		{
 			$nextChunk = parent::next();
 
-			if($nextChunk === FALSE)
-			{
-				return FALSE;
-			}
-
 			$this->current = $nextChunk;
 		}
 

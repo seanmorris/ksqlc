@@ -239,11 +239,6 @@ class Ksqlc
 				continue;
 			}
 
-			if($buffer === NULL)
-			{
-				continue;
-			}
-
 			if(!$buffer = rtrim($buffer))
 			{
 				continue;

@@ -34,7 +34,7 @@ class Krest
 			, ['Connection: close']
 		);
 
-		if($response->code !== HTTP::STATUS_OK)
+		if($response->code !== Http::STATUS_OK)
 		{
 			throw new \UnexpectedValueException(
 				'Unexpected HTTP response: '
@@ -72,7 +72,7 @@ class Krest
 			, json_encode(['records' => $records])
 		);
 
-		if($response->code !== HTTP::STATUS_OK)
+		if($response->code !== Http::STATUS_OK)
 		{
 			throw new \UnexpectedValueException(
 				'Unexpected HTTP response: '
